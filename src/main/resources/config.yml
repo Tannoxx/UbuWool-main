@@ -1,0 +1,48 @@
+# ================================
+#   UbuWool - Configuration
+# ================================
+startup-message: "Ubuwool chargé avec succès !"
+prefix: "&8[&bUbuWool&8] &r"
+debug: false
+
+# ---- Paramètres de partie ----
+game:
+  # Nombre de rounds pour gagner la partie
+  rounds-to-win: 5
+  # Durée maximale d'un round en secondes (0 = infini)
+  round-max-seconds: 0
+  # Durée de la phase d'achat en secondes
+  buy-phase-seconds: 15
+  # Durée de la phase de choix d'agent en secondes
+  agent-select-seconds: 60
+  # Durée de la pause entre rounds en secondes
+  pause-between-rounds-seconds: 5
+
+# ---- Économie ----
+economy:
+  # Ubus de départ par joueur
+  start-ubus: 500
+  # Ubus gagnés par kill
+  kill-ubus: 250
+  # Ubus gagnés par round gagné (équipe gagnante)
+  round-win-ubus: 1800
+  # Ubus gagnés par round perdu (équipe perdante)
+  round-loss-ubus: 1400
+  # Ubus gagnés en capturant le centre
+  center-capture-ubus: 500
+
+# ---- Prix du shop ----
+shop:
+  apple: 400
+  pickaxe-iron: 300
+  pickaxe-diamond: 300
+  protection: 200
+  sharpness: 400
+  wool: 50
+  absorption: 250
+  shears: 200
+
+# ---- Kits ----
+kit:
+  # Nombre de laine de départ par joueur
+  starting-wool: 16

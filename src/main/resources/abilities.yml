@@ -1,0 +1,99 @@
+# ============================================================
+#   UbuWool — Configuration des Abilities
+#   Modifiez ces valeurs sans recompiler le plugin.
+# ============================================================
+
+# ---- Cooldowns (en millisecondes) ----
+cooldowns:
+  sembol:
+    c1: 50000
+    c2: 30000
+  fantom:
+    c1: 30000
+    c2: 30000
+  gargamel:
+    c1: 40000
+    c2: 40000
+  horcus:
+    c2_tp: 30000    # cooldown seulement si TP utilisé
+  bambouvore:
+    c1: 35000
+    c2: 45000
+  lolita:
+    c1: 600000      # plafonné à 10min par AbilityManager
+    c2: 40000
+  asky:
+    c1: 45000
+    c2: 45000
+  carlos:
+    c1: 40000
+    c2: 40000
+  larok:
+    c1: 40000
+    c2: 40000
+  ticksuspicious:
+    c1: 20000
+    c2: 50000
+  mascord:
+    c1: 40000
+    c2: 50000
+  hijab:
+    c1: 1000
+    c2: 50000
+  ilargia:
+    c1: 40000
+    c2: 40000
+  gekko:
+    c1: 40000
+    c2: 35000
+
+# ---- Dégâts ----
+damage:
+  larok_c2: 4           # Neon Fulgurance (2 coeurs = 4 HP)
+  larok_rocket: 10      # Raze Rocket (5 coeurs = 10 HP)
+  larok_rocket_min: 1.0 # HP minimum laissé après rocket
+  gekko_c1: 4           # Altego Wingman explosion (2 coeurs)
+  tick_mine: 6          # Mine Explosive
+  tick_seeker: 4        # Tête Chercheuse
+  lolita_c2: 4          # Morsure du Chihuahua
+
+# ---- Durées (en ticks, 20 ticks = 1 seconde) ----
+durations:
+  sembol_ult_speed: 400        # Galopa Feu-vite durée
+  fantom_c1: 200               # Turtle Master durée
+  gargamel_c1_glowing: 120     # Golden Radar glowing
+  carlos_c1: 100               # Fou à la Hache durée
+  carlos_c2: 160               # Sacrifice Chevalier durée
+  carlos_ult_revive: 1200      # Dernier Shift timer (60s)
+  lolita_c1: 600               # Madame Saucisse durée (30s)
+  lolita_ult: 1200             # Baños durée (60s)
+  asky_c1_effects: 80          # Phenerwin effets négatifs
+  asky_c2_range: 20            # Réggaeton rayon en blocs
+  asky_ult_phase: 300          # Durée chaque phase jukebox (15s)
+  bambouvore_c2_timeout: 600   # Pot-de-Vin expiration
+  mascord_c2_honey: 100        # Syndrome Apiculteur duree miel
+  ilargia_c1_duration: 80      # Rig and Wa durée (4s)
+  hijab_c2_fire_ms: 4000       # Dan Kyojur durée fire aspect (ms)
+  horcus_ult_arrows: 5         # Tour de Force nb flèches spectrales
+  tick_mine_lifetime: 6800     # Mine durée de vie en ticks (340s)
+  larok_rocket_lifetime: 120   # Raze Rocket durée de vie
+
+# ---- Rayons / distances ----
+ranges:
+  asky_ult_radius_sq: 225      # Rayon jukebox² (15 blocs)
+  sembol_c1_radius: 5          # Crâmage Dust rayon
+  gekko_c1_explosion_sq: 9     # Altego explosion rayon²
+  gekko_c2_range: 20           # Verti Flash portée
+  ilargia_c2_radius: 5         # Plaque de Cuisson rayon
+  tick_mine_trigger_sq: 2.25   # Mine déclenchement rayon²
+  tick_mine_explosion_sq: 6.25 # Mine explosion rayon²
+  tick_seeker_speed: 0.5       # Vitesse tête chercheuse (blocs/tick)
+  lolita_ult_aim: 40           # Baños portée visée
+  mascord_c2_range: 5          # Syndrome Apiculteur portée
+  larok_rocket_radius_sq: 36   # Raze Rocket rayon² (6 blocs)
+  hijab_zombie_retarget: 20    # Recibleage zombies (ticks)
+  bambouvore_c1_height: 5      # Hauteur muraille bambou
+
+# ---- Economie abilities ----
+economy:
+  star_ult_kill: 1             # kills requis pour +1 étoile en capturant une star

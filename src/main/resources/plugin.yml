@@ -1,0 +1,20 @@
+name: UbuWool
+version: 1.0.0
+main: fr.sannoxx.ubuwool.UbuWool
+api-version: '1.21'
+description: Plugin Woolwars Minecraft 1.21.1
+author: Sannoxx
+
+commands:
+  uw:
+    description: Commande principale UbuWool
+    usage: /uw <join|leave|start|stop|buy|vote|profile|agentlist|agent|admin>
+    permission: ubuwool.player
+
+permissions:
+  ubuwool.player:
+    description: Accès aux commandes joueur
+    default: true
+  ubuwool.admin:
+    description: Accès aux commandes admin
+    default: op
