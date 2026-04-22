@@ -597,6 +597,8 @@ public class GameManager {
         CarlosAbilities.cancelReviveTimer(player.getUniqueId());
         deadPlayers.add(player.getUniqueId());
 
+        DomaAbilities.releaseIceForPlayer(player.getName());
+
         PlayerData victimData = playerDataMap.get(player.getUniqueId());
         if (victimData != null) victimData.addDeath();
 

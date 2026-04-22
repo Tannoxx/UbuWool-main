@@ -316,6 +316,15 @@ public class DomaAbilities {
         }
     }
 
+    public static void releaseIceForPlayer(String targetName) {
+        List<org.bukkit.block.Block> blocks = iceBlocks.remove(targetName);
+        if (blocks != null)
+            blocks.forEach(b -> {
+                if (b.getType() == Material.BARRIER || b.getType() == Material.ICE)
+                    b.setType(Material.AIR);
+            });
+    }
+
     public static void sherbetLand(Player doma) {
         GameManager gm = GameRegistry.getInstanceOf(doma);
         if (gm == null) return;
