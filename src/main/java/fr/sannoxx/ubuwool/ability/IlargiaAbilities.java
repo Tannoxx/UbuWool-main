@@ -60,7 +60,6 @@ public class IlargiaAbilities {
 
         final Player finalTarget = target;
 
-        // Slot tenu au moment du cast — on annule si Ilargia change d'item
         final int castSlot = ilargia.getInventory().getHeldItemSlot();
 
         ilargia.sendMessage(Lang.get(ilargia, Lang.Key.MSG_ILAR_C1_CAST, finalTarget.getName()));
@@ -71,7 +70,6 @@ public class IlargiaAbilities {
                 .runTaskTimer(UbuWool.getInstance(), task -> {
                     elapsed[0]++;
 
-                    // ── Annulation si Ilargia change d'item ──────────────
                     if (ilargia.isOnline()
                             && ilargia.getInventory().getHeldItemSlot() != castSlot) {
                         task.cancel();

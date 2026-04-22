@@ -31,7 +31,6 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        // On ne fait rien d'automatique
     }
 
     @EventHandler
@@ -61,10 +60,6 @@ public class PlayerListener implements Listener {
         AbilityManager.clearCooldowns(player.getUniqueId());
     }
 
-    // =========================================================
-    // MENUS (InventoryClick)
-    // =========================================================
-
     @EventHandler(priority = EventPriority.HIGH)
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getInventory().getHolder() instanceof AgentMenu)
@@ -81,10 +76,6 @@ public class PlayerListener implements Listener {
             LeaderboardMenu.handleClick(event);
     }
 
-    // =========================================================
-    // MENUS (InventoryClose)
-    // =========================================================
-
     @EventHandler(priority = EventPriority.HIGH)
     public void onInventoryClose(InventoryCloseEvent event) {
         if (event.getInventory().getHolder() instanceof TeamMenu) {
@@ -96,10 +87,6 @@ public class PlayerListener implements Listener {
             BuyMenu.onClose(event);
         }
     }
-
-    // =========================================================
-    // RAMASSAGE D'ITEMS
-    // =========================================================
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onItemPickup(EntityPickupItemEvent event) {
@@ -119,10 +106,6 @@ public class PlayerListener implements Listener {
             event.setCancelled(true);
         }
     }
-
-    // =========================================================
-    // MORT
-    // =========================================================
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDeath(PlayerDeathEvent event) {
@@ -159,10 +142,6 @@ public class PlayerListener implements Listener {
                     : new Location(Bukkit.getWorlds().getFirst(), map.spawnBlueX, map.spawnBlueY, map.spawnBlueZ));
         }
     }
-
-    // =========================================================
-    // DÉGÂTS
-    // =========================================================
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onDamage(EntityDamageByEntityEvent event) {
@@ -227,10 +206,6 @@ public class PlayerListener implements Listener {
         }
     }
 
-    // =========================================================
-    // PROJECTILE LANCÉ
-    // =========================================================
-
     @EventHandler
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
         if (!(event.getEntity() instanceof Arrow arrow)) return;
@@ -251,10 +226,6 @@ public class PlayerListener implements Listener {
 
         HorcusAbilities.onHeadHunterShoot(arrow);
     }
-
-    // =========================================================
-    // RAZE ROCKET
-    // =========================================================
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onRazeRocketHitBlock(ProjectileHitEvent event) {
@@ -343,10 +314,6 @@ public class PlayerListener implements Listener {
                 || mat == Material.BROWN_WOOL || mat == Material.BLACK_WOOL;
     }
 
-    // =========================================================
-    // CLIC DROIT / UTILISATION D'ITEM
-    // =========================================================
-
     @EventHandler(priority = EventPriority.HIGH)
     public void onInteract(PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
@@ -379,7 +346,6 @@ public class PlayerListener implements Listener {
         if (stack.getType() == Material.FIREWORK_ROCKET
                 && stack.hasItemMeta() && stack.getItemMeta().hasDisplayName()
                 && stack.getItemMeta().getDisplayName().contains("Raze Rocket")) {
-            // Blocage Raze Rocket dans les baños
             if (LolitaAbilities.isInBanos(player)) {
                 event.setCancelled(true);
                 return;
@@ -399,10 +365,6 @@ public class PlayerListener implements Listener {
             AbilityDispatcher.dispatch(player, stack, slot);
         }
     }
-
-    // =========================================================
-    // ATTAQUE D'ENTITÉ — Lolita C2
-    // =========================================================
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onAttackEntity(EntityDamageByEntityEvent event) {
@@ -431,7 +393,6 @@ public class PlayerListener implements Listener {
 
             if (gm.isRedTeam(attacker) == gm.isRedTeam(target)) return;
 
-            // Blocage dans les baños
             if (LolitaAbilities.isInBanos(attacker)) {
                 event.setCancelled(true);
                 return;
@@ -454,10 +415,6 @@ public class PlayerListener implements Listener {
         }
     }
 
-    // =========================================================
-    // DROP D'ITEMS
-    // =========================================================
-
     @EventHandler(priority = EventPriority.HIGH)
     public void onDrop(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
@@ -475,12 +432,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    // =========================================================
-    // ULTIMATE
-    // =========================================================
-
     private void handleUltimate(Player player, GameManager gm) {
-        // Blocage dans les Baños
         if (LolitaAbilities.playersInBanos.contains(player.getName())) {
             return;
         }
@@ -505,7 +457,6 @@ public class PlayerListener implements Listener {
         data.consumeUltimate();
         gm.updateUltimateItem(player, data);
 
-        // Mettre à jour le tab après changement d'ultime
         TabManager.updateTab(gm);
     }
 
@@ -543,10 +494,6 @@ public class PlayerListener implements Listener {
         }
     }
 
-    // =========================================================
-    // RAZE ROCKET — lancement
-    // =========================================================
-
     private void launchRazeRocket(Player player, GameManager gm) {
         World world = player.getWorld();
         Vector dir = player.getEyeLocation().getDirection().normalize();
@@ -564,10 +511,6 @@ public class PlayerListener implements Listener {
 
         gm.activeRockets.put(fireball.getUniqueId(), player.getUniqueId());
     }
-
-    // =========================================================
-    // HELPER — refresh TeamMenu
-    // =========================================================
 
     public static void refreshTeamMenus(GameManager gm) {
         for (Player p : gm.getAllPlayers()) {

@@ -16,14 +16,6 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
-/**
- * Menu Profil unifié — 3 onglets :
- *   Page 0 : Profil (langue, infos joueur)
- *   Page 1 : Statistiques personnelles
- *   Page 2 : Leaderboard
- *
- * Tous les textes sont traduits via Lang.java / messages_fr.yml / messages_en.yml.
- */
 public class ProfileMenu implements InventoryHolder {
 
     private static final Map<UUID, Integer> currentPage  = new HashMap<>();
@@ -55,10 +47,6 @@ public class ProfileMenu implements InventoryHolder {
     @Override
     public @NonNull Inventory getInventory() { return inventory; }
 
-    // =========================================================
-    // Points d'entrée publics
-    // =========================================================
-
     public static void open(Player viewer) {
         open(viewer, viewer, 0);
     }
@@ -78,10 +66,6 @@ public class ProfileMenu implements InventoryHolder {
         viewer.openInventory(menu.inventory);
     }
 
-    // =========================================================
-    // Construction
-    // =========================================================
-
     private void build() {
         ItemStack filler = item(Material.BLACK_STAINED_GLASS_PANE, " ", null);
         for (int i = 0; i < 54; i++) inventory.setItem(i, filler);
@@ -94,7 +78,6 @@ public class ProfileMenu implements InventoryHolder {
         buildNav();
     }
 
-    // ---- Page 0 : Profil ----
     private void buildProfile() {
         String lang = PlayerProfile.getLanguage(viewer);
         String langDisplay = lang.equals("FR") ? "Français" : "English";
@@ -110,7 +93,6 @@ public class ProfileMenu implements InventoryHolder {
         ItemStack sep = item(Material.BLACK_STAINED_GLASS_PANE, " ", null);
         for (int s : new int[]{9,10,11,12,13,14,15,16,17}) inventory.setItem(s, sep);
 
-        // Français — slot 20
         ItemStack fr = item(Material.BLUE_TERRACOTTA,
                 "§9§lFrançais / French",
                 Arrays.asList(
@@ -122,7 +104,6 @@ public class ProfileMenu implements InventoryHolder {
         if (lang.equals("FR")) AbilityManager.addGlow(fr);
         inventory.setItem(20, fr);
 
-        // English — slot 24
         ItemStack enItem = item(Material.RED_TERRACOTTA,
                 "§c§lEnglish / Anglais",
                 Arrays.asList(
@@ -134,7 +115,6 @@ public class ProfileMenu implements InventoryHolder {
         if (lang.equals("EN")) AbilityManager.addGlow(enItem);
         inventory.setItem(24, enItem);
 
-        // Raccourci stats — slot 31
         PlayerStats.Stats stats = PlayerStats.get(viewer.getUniqueId());
         inventory.setItem(31, item(Material.BOOK,
                 "§6§l" + Lang.get(viewer, Lang.Key.PROFILE_STATS_SHORTCUT),
@@ -148,7 +128,6 @@ public class ProfileMenu implements InventoryHolder {
                 )));
     }
 
-    // ---- Page 1 : Stats ----
     private void buildStats() {
         PlayerStats.Stats stats = PlayerStats.get(target.getUniqueId());
 
@@ -162,7 +141,6 @@ public class ProfileMenu implements InventoryHolder {
         ItemStack sep = item(Material.BLACK_STAINED_GLASS_PANE, " ", null);
         for (int s : new int[]{9,10,11,12,13,14,15,16,17}) inventory.setItem(s, sep);
 
-        // Kills / Morts — slot 19
         inventory.setItem(19, item(Material.DIAMOND_SWORD,
                 "§c" + Lang.get(viewer, Lang.Key.STATS_KILLS_DEATHS),
                 Arrays.asList(
@@ -171,7 +149,6 @@ public class ProfileMenu implements InventoryHolder {
                         "§7KD : §a" + String.format("%.2f", stats.getKDA())
                 )));
 
-        // Victoires / Défaites — slot 21
         inventory.setItem(21, item(Material.GOLDEN_APPLE,
                 "§a" + Lang.get(viewer, Lang.Key.STATS_WINS_LOSSES),
                 Arrays.asList(
@@ -180,7 +157,6 @@ public class ProfileMenu implements InventoryHolder {
                         "§7" + Lang.get(viewer, Lang.Key.STATS_WIN_RATE) + " : §e" + String.format("%.1f%%", stats.getWinRate())
                 )));
 
-        // Rounds — slot 23
         inventory.setItem(23, item(Material.NETHER_STAR,
                 "§6" + Lang.get(viewer, Lang.Key.STATS_ROUNDS_LABEL),
                 Arrays.asList(
@@ -188,7 +164,6 @@ public class ProfileMenu implements InventoryHolder {
                         "§7" + Lang.get(viewer, Lang.Key.STATS_ROUNDS_LOST) + " : §c" + stats.roundsLost
                 )));
 
-        // Agents — slot 25
         inventory.setItem(25, item(Material.COMPASS,
                 "§b" + Lang.get(viewer, Lang.Key.STATS_AGENTS_LABEL),
                 Arrays.asList(
@@ -196,7 +171,6 @@ public class ProfileMenu implements InventoryHolder {
                         "§7" + Lang.get(viewer, Lang.Key.STATS_BEST_KILLS_AGENT) + " : §f§l" + stats.getBestAgent()
                 )));
 
-        // Kills par agent
         List<Map.Entry<String, Integer>> killEntries = new ArrayList<>(stats.killsByAgent.entrySet());
         killEntries.sort((a, b) -> Integer.compare(b.getValue(), a.getValue()));
         int[] agentSlots = {28,29,30,31,32,33,34,37,38,39,40,41,42,43};
@@ -215,7 +189,6 @@ public class ProfileMenu implements InventoryHolder {
         }
     }
 
-    // ---- Page 2 : Leaderboard ----
     private void buildLeaderboard() {
         ItemStack sep = item(Material.BLACK_STAINED_GLASS_PANE, " ", null);
         for (int s : new int[]{9,10,11,12,13,14,15,16,17}) inventory.setItem(s, sep);
@@ -249,7 +222,6 @@ public class ProfileMenu implements InventoryHolder {
         }
     }
 
-    // ---- Barre de navigation ----
     private void buildNav() {
         // Onglet Profil
         inventory.setItem(SLOT_TAB_PROFILE, item(
@@ -259,7 +231,6 @@ public class ProfileMenu implements InventoryHolder {
                         ? "§a" + Lang.get(viewer, Lang.Key.NAV_CURRENT_PAGE)
                         : "§7" + Lang.get(viewer, Lang.Key.NAV_CLICK_TO_OPEN))));
 
-        // Onglet Stats
         inventory.setItem(SLOT_TAB_STATS, item(
                 page == 1 ? Material.LIME_STAINED_GLASS_PANE : Material.GREEN_STAINED_GLASS_PANE,
                 (page == 1 ? "§a§l▶ " : "§7") + Lang.get(viewer, Lang.Key.NAV_STATS),
@@ -267,7 +238,6 @@ public class ProfileMenu implements InventoryHolder {
                         ? "§a" + Lang.get(viewer, Lang.Key.NAV_CURRENT_PAGE)
                         : "§7" + Lang.get(viewer, Lang.Key.NAV_CLICK_TO_OPEN))));
 
-        // Onglet Leaderboard
         inventory.setItem(SLOT_TAB_LEADERBOARD, item(
                 page == 2 ? Material.LIME_STAINED_GLASS_PANE : Material.GREEN_STAINED_GLASS_PANE,
                 (page == 2 ? "§a§l▶ " : "§7") + Lang.get(viewer, Lang.Key.NAV_LEADERBOARD),
@@ -275,14 +245,9 @@ public class ProfileMenu implements InventoryHolder {
                         ? "§a" + Lang.get(viewer, Lang.Key.NAV_CURRENT_PAGE)
                         : "§7" + Lang.get(viewer, Lang.Key.NAV_CLICK_TO_OPEN))));
 
-        // Fermer
         inventory.setItem(SLOT_CLOSE, item(Material.BARRIER,
                 "§c" + Lang.get(viewer, Lang.Key.NAV_CLOSE), null));
     }
-
-    // =========================================================
-    // Gestion des clics
-    // =========================================================
 
     public static void handleClick(InventoryClickEvent event) {
         event.setCancelled(true);
@@ -312,10 +277,6 @@ public class ProfileMenu implements InventoryHolder {
             }
         }
     }
-
-    // =========================================================
-    // Helpers
-    // =========================================================
 
     static ItemStack item(Material mat, String name, List<String> lore) {
         ItemStack stack = new ItemStack(mat);

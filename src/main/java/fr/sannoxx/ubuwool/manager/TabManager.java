@@ -45,12 +45,9 @@ public class TabManager {
         applyTabName(gm, player);
     }
 
-    /** Réinitialise le tab et les nametags d'une instance (fin de partie). */
     public static void resetTab(GameManager gm) {
         Scoreboard sb = Bukkit.getScoreboardManager().getMainScoreboard();
 
-        // Retirer chaque joueur de son équipe AVANT de supprimer les équipes,
-        // sinon le préfixe coloré (§c / §9) reste affiché au-dessus de la tête.
         for (Player p : gm.getAllPlayers()) {
             String teamId = buildTeamId(gm, p);
             Team team = sb.getTeam(teamId);
@@ -67,7 +64,6 @@ public class TabManager {
         }
     }
 
-    /** Réinitialise tous les tabs (disable du plugin). */
     public static void resetAllTabs() {
         Scoreboard sb = Bukkit.getScoreboardManager().getMainScoreboard();
         sb.getTeams().stream()

@@ -452,8 +452,6 @@ public class GameManager {
         state = GameState.GAME_OVER;
         cancelTimer(); cancelCapture();
         UbuHUD.reset(this); TabManager.resetTab(this);
-
-        // Collecter les joueurs AVANT le reset
         List<Player> allPlayers = getAllPlayers();
 
         for (Player p : allPlayers) {
@@ -482,7 +480,6 @@ public class GameManager {
         cleanWool();
         reset();
 
-        // Téléporter au spawn du monde après le reset
         org.bukkit.World mainWorld = Bukkit.getWorlds().getFirst();
         Location worldSpawn = mainWorld.getSpawnLocation();
         for (Player p : allPlayers) {
@@ -600,7 +597,6 @@ public class GameManager {
         CarlosAbilities.cancelReviveTimer(player.getUniqueId());
         deadPlayers.add(player.getUniqueId());
 
-        // ---- MORT : incrémenter le compteur de morts en session ----
         PlayerData victimData = playerDataMap.get(player.getUniqueId());
         if (victimData != null) victimData.addDeath();
 
@@ -639,7 +635,6 @@ public class GameManager {
                 String killerAgent = killerData.agent != null ? killerData.agent.getName() : "?";
                 PlayerStats.recordKill(killer.getUniqueId(), killerAgent, activeMapName);
 
-                // victimData déjà récupéré plus haut
                 if (victimData != null && !victimData.isUltimateReady()) {
                     victimData.ultimateKills++;
                     updateUltimateItem(player, victimData);
@@ -655,7 +650,6 @@ public class GameManager {
             }
         }
 
-        // ---- MISE À JOUR DU TAB en temps réel après chaque kill/mort ----
         TabManager.updateTab(this);
 
         checkTeamElimination();
@@ -668,7 +662,6 @@ public class GameManager {
         else if (blueDead >= teamBlue.size()) endRound(true);
     }
 
-    // ---- Rend un ItemStack unbreakable ----
     private static ItemStack makeUnbreakable(ItemStack stack) {
         if (stack == null || stack.getType() == Material.AIR) return stack;
         ItemMeta meta = stack.getItemMeta();

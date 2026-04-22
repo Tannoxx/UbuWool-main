@@ -20,7 +20,6 @@ import java.util.*;
 
 public class MapVoteMenu implements InventoryHolder {
 
-    /** Votes : playerName → mapName */
     public static final Map<String, String> votes = new HashMap<>();
 
     public static void resetVotes() { votes.clear(); }
@@ -66,14 +65,6 @@ public class MapVoteMenu implements InventoryHolder {
         player.openInventory(menu.inventory);
     }
 
-    // =========================================================
-    // Blocage de fermeture
-    // =========================================================
-
-    /**
-     * Appelé depuis PlayerListener.onInventoryClose().
-     * Si le joueur n'a pas encore voté, on rouvre le menu 1 tick plus tard.
-     */
     public static void onClose(InventoryCloseEvent event) {
         if (!(event.getPlayer() instanceof Player player)) return;
         if (!(event.getInventory().getHolder() instanceof MapVoteMenu)) return;
@@ -81,13 +72,10 @@ public class MapVoteMenu implements InventoryHolder {
         GameManager gm = GameRegistry.getInstanceOf(player);
         if (gm == null) return;
 
-        // Si la partie a déjà avancé au-delà de WAITING, on laisse fermer
         if (gm.state != GameManager.GameState.WAITING) return;
 
-        // Si le joueur a déjà voté, on laisse fermer
         if (votes.containsKey(player.getName())) return;
 
-        // Sinon, rouvrir 1 tick plus tard
         UbuWool.getInstance().getServer().getScheduler()
                 .runTaskLater(UbuWool.getInstance(), () -> {
                     if (!player.isOnline()) return;
@@ -97,10 +85,6 @@ public class MapVoteMenu implements InventoryHolder {
                     }
                 }, 1L);
     }
-
-    // =========================================================
-    // Construction
-    // =========================================================
 
     private void build(Player player) {
         ItemStack filler = item(Material.BLACK_STAINED_GLASS_PANE, " ", null);
@@ -139,10 +123,6 @@ public class MapVoteMenu implements InventoryHolder {
                     )));
         }
     }
-
-    // =========================================================
-    // Gestion des clics
-    // =========================================================
 
     public static void handleClick(InventoryClickEvent event) {
         event.setCancelled(true);

@@ -77,7 +77,6 @@ public class DeathRecap {
         sendRecap(victim, data);
     }
 
-    // ---- helpers d'affichage ----
 
     private static void sendNoInfo(Player victim) {
         victim.sendMessage("§7" + Lang.get(victim, Lang.Key.RECAP_NO_INFO));

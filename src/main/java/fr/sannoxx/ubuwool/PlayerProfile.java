@@ -13,8 +13,6 @@ public class PlayerProfile {
     private static Path PROFILES_DIR;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Map<UUID, Profile> cache = new HashMap<>();
-
-    /** Langues acceptées — toute valeur hors de cette liste sera remise à FR. */
     private static final Set<String> VALID_LANGS = Set.of("FR", "EN");
 
     public static void init(UbuWool plugin) {
@@ -38,7 +36,6 @@ public class PlayerProfile {
     }
 
     public static void setLanguage(Player player, String lang) {
-        // Validation : seules FR et EN sont acceptées
         String sanitized = (lang != null && VALID_LANGS.contains(lang.toUpperCase()))
                 ? lang.toUpperCase() : "FR";
         Profile profile = get(player);
@@ -53,7 +50,6 @@ public class PlayerProfile {
         try (Reader r = Files.newBufferedReader(file)) {
             Profile p = GSON.fromJson(r, Profile.class);
             if (p == null) return new Profile();
-            // Valider la langue après lecture — corrige les fichiers corrompus
             if (p.language == null || !VALID_LANGS.contains(p.language.toUpperCase())) {
                 p.language = "FR";
             } else {

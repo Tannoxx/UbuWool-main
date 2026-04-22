@@ -42,11 +42,9 @@ public class AgentMenu implements InventoryHolder {
     private void buildMenu(Player player) {
         boolean en = PlayerProfile.getLanguage(player).equals("EN");
 
-        // Remplir avec des panneaux noirs
         ItemStack filler = makeItem(Material.BLACK_STAINED_GLASS_PANE, " ", null);
         for (int i = 0; i < 27; i++) inventory.setItem(i, filler);
 
-        // Sembol — slot 11
         inventory.setItem(11, makeItem(Material.RED_DYE, "§c§lSEMBOL", en ? Arrays.asList(
                 "§7Passive: §fSpeed I",
                 "§7Abilities:",
@@ -63,7 +61,6 @@ public class AgentMenu implements InventoryHolder {
                 " ", "§eClique pour choisir !"
         )));
 
-        // Fantom — slot 13
         inventory.setItem(13, makeItem(Material.LIGHT_BLUE_DYE, "§b§lFANTOM", en ? Arrays.asList(
                 "§7Passive: §fPermanent shield",
                 "§7Abilities:",
@@ -80,7 +77,6 @@ public class AgentMenu implements InventoryHolder {
                 " ", "§eClique pour choisir !"
         )));
 
-        // Gargamel — slot 15
         inventory.setItem(15, makeItem(Material.ORANGE_DYE, "§6§lGARGAMEL", en ? Arrays.asList(
                 "§7Passive: §fHealing potion (2♥)",
                 "§7Abilities:",
@@ -97,7 +93,6 @@ public class AgentMenu implements InventoryHolder {
                 " ", "§eClique pour choisir !"
         )));
 
-        // Horcus — slot 3
         inventory.setItem(3, makeItem(Material.NETHER_WART, "§4§lHORCUS", en ? Arrays.asList(
                 "§7Passive: §f8 arrows",
                 "§7Abilities:",
@@ -114,7 +109,6 @@ public class AgentMenu implements InventoryHolder {
                 " ", "§eClique pour choisir !"
         )));
 
-        // Bambouvore — slot 5
         inventory.setItem(5, makeItem(Material.GREEN_DYE, "§2§lBAMBOUVORE", en ? Arrays.asList(
                 "§7Passive: §fGolden apple",
                 "§7Abilities:",
@@ -131,7 +125,6 @@ public class AgentMenu implements InventoryHolder {
                 " ", "§eClique pour choisir !"
         )));
 
-        // Lolita — slot 21
         inventory.setItem(21, makeItem(Material.BLACK_DYE, "§0§lLOLITA", en ? Arrays.asList(
                 "§7Passive: §fHaste II potion (10s)",
                 "§7Abilities:",
@@ -148,7 +141,6 @@ public class AgentMenu implements InventoryHolder {
                 " ", "§eClique pour choisir !"
         )));
 
-        // Asky — slot 23
         inventory.setItem(23, makeItem(Material.MAGENTA_DYE, "§d§lASKY", en ? Arrays.asList(
                 "§7Passive: §fLeather helmet",
                 "§7Abilities:",
@@ -165,7 +157,6 @@ public class AgentMenu implements InventoryHolder {
                 " ", "§eClique pour choisir !"
         )));
 
-        // Carlos — slot 12
         inventory.setItem(12, makeItem(Material.YELLOW_DYE, "§e§lCARLOS", en ? Arrays.asList(
                 "§7Passive: §fFire resistance",
                 "§7Abilities:",
@@ -182,7 +173,6 @@ public class AgentMenu implements InventoryHolder {
                 " ", "§eClique pour choisir !"
         )));
 
-        // Larok — slot 14
         inventory.setItem(14, makeItem(Material.WHITE_DYE, "§f§lLAROK", en ? Arrays.asList(
                 "§7Passive: §f7 wind charges",
                 "§7Abilities:",
@@ -199,7 +189,6 @@ public class AgentMenu implements InventoryHolder {
                 " ", "§eClique pour choisir !"
         )));
 
-        // Ticksuspicious — slot 4
         inventory.setItem(4, makeItem(Material.LIGHT_GRAY_DYE, "§7§lTICKSUSPICIOUS", en ? Arrays.asList(
                 "§7Passive: §fexplodes every 10 hits received",
                 "§7Abilities:",
@@ -216,7 +205,6 @@ public class AgentMenu implements InventoryHolder {
                 " ", "§eClique pour choisir !"
         )));
 
-        // Mascord — slot 22
         inventory.setItem(22, makeItem(Material.BLUE_DYE, "§9§lMASCORD", en ? Arrays.asList(
                 "§7Passive: §fcompass → weakest enemy",
                 "§7Abilities:",
@@ -233,7 +221,6 @@ public class AgentMenu implements InventoryHolder {
                 " ", "§eClique pour choisir !"
         )));
 
-        // Gekko — slot 20
         inventory.setItem(20, makeItem(Material.LIME_DYE, "§a§lGEKKO", en ? Arrays.asList(
                 "§7Passive: §flingering poison potion",
                 "§7Abilities:",
@@ -250,7 +237,6 @@ public class AgentMenu implements InventoryHolder {
                 " ", "§eClique pour choisir !"
         )));
 
-        // Hijab — slot 6
         inventory.setItem(6, makeItem(Material.PURPLE_DYE, "§5§lHIJAB", en ? Arrays.asList(
                 "§7Passive: §fsees opponents' health",
                 "§7Abilities:",
@@ -267,7 +253,6 @@ public class AgentMenu implements InventoryHolder {
                 " ", "§eClique pour choisir !"
         )));
 
-        // Ilargia — slot 24
         inventory.setItem(24, makeItem(Material.GRAY_DYE, "§8§lILARGIA", en ? Arrays.asList(
                 "§7Passive: §finvisibility without armor",
                 "§7Abilities:",
@@ -284,7 +269,6 @@ public class AgentMenu implements InventoryHolder {
                 " ", "§eClique pour choisir !"
         )));
 
-        // Doma — slot 2
         inventory.setItem(2, makeItem(Material.CYAN_DYE, "§3§lDOMA", en ? Arrays.asList(
                 "§7Passive: §ffreezing hit every 10 hits",
                 "§7Abilities:",
@@ -314,7 +298,6 @@ public class AgentMenu implements InventoryHolder {
         return item;
     }
 
-    /** Mapping slot → nom d'agent */
     public static String getAgentFromSlot(int slot) {
         return switch (slot) {
             case 11 -> "sembol";
@@ -336,7 +319,6 @@ public class AgentMenu implements InventoryHolder {
         };
     }
 
-    /** Appelé par le listener pour traiter un clic */
     public static void handleClick(InventoryClickEvent event) {
         event.setCancelled(true);
         if (!(event.getWhoClicked() instanceof Player player)) return;

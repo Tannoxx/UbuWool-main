@@ -24,7 +24,7 @@ class FantomAbilityImpl implements AgentAbility {
     @Override public boolean useUltimate(Player p) { FantomAbilities.anvilRain(p); return true; }
     @Override public long cooldownC1Ms() { return 30_000L; }
     @Override public long cooldownC2Ms() { return 30_000L; }
-    @Override public void resetRound() { /* Fantom : les FallingBlocks sont nettoyés par GameManager */ }
+    @Override public void resetRound() {}
 }
 
 public class FantomAbilities {

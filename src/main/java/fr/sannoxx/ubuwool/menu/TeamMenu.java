@@ -19,15 +19,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
-/**
- * TeamMenu — avec refresh temps réel et blocage de fermeture.
- *
- * Tant qu'un joueur n'a pas choisi d'équipe, le menu se rouvre automatiquement
- * s'il tente de le fermer.
- *
- * Le refresh temps réel met à jour le contenu du menu pour tous les joueurs
- * qui l'ont ouvert dès qu'un joueur rejoint une équipe.
- */
+
 public class TeamMenu implements InventoryHolder {
 
     private final Inventory inventory;
@@ -44,42 +36,26 @@ public class TeamMenu implements InventoryHolder {
     @Override
     public @NonNull Inventory getInventory() { return inventory; }
 
-    // =========================================================
-    // Ouverture
-    // =========================================================
-
     public static void open(Player player, GameManager gm) {
         TeamMenu menu = new TeamMenu(player, gm);
         player.openInventory(menu.inventory);
     }
 
-    // =========================================================
-    // Blocage de fermeture
-    // =========================================================
-
-    /**
-     * Appelé depuis PlayerListener.onInventoryClose().
-     * Si le joueur n'a pas encore choisi d'équipe, on rouvre le menu 1 tick plus tard.
-     */
     public static void onClose(InventoryCloseEvent event) {
         if (!(event.getPlayer() instanceof Player player)) return;
         if (!(event.getInventory().getHolder() instanceof TeamMenu menu)) return;
 
         GameManager gm = menu.gm;
 
-        // Si la partie a avancé (AGENT_SELECT ou plus), on laisse fermer
         if (gm.state != GameManager.GameState.WAITING) return;
 
-        // Si le joueur a déjà choisi une équipe, on laisse fermer
         boolean hasTeam = gm.teamRed.contains(player.getUniqueId())
                 || gm.teamBlue.contains(player.getUniqueId());
         if (hasTeam) return;
 
-        // Sinon, rouvrir 1 tick plus tard
         UbuWool.getInstance().getServer().getScheduler()
                 .runTaskLater(UbuWool.getInstance(), () -> {
                     if (!player.isOnline()) return;
-                    // Vérifier à nouveau (la partie a peut-être avancé entre-temps)
                     if (gm.state != GameManager.GameState.WAITING) return;
                     boolean stillNoTeam = !gm.teamRed.contains(player.getUniqueId())
                             && !gm.teamBlue.contains(player.getUniqueId());
@@ -89,10 +65,6 @@ public class TeamMenu implements InventoryHolder {
                 }, 1L);
     }
 
-    // =========================================================
-    // Refresh en place (sans fermer le menu)
-    // =========================================================
-
     public static void refresh(Player player, GameManager gm) {
         if (!(player.getOpenInventory().getTopInventory().getHolder() instanceof TeamMenu menu)) return;
         if (menu.gm.getInstanceId() != gm.getInstanceId()) return;
@@ -100,15 +72,10 @@ public class TeamMenu implements InventoryHolder {
         player.updateInventory();
     }
 
-    // =========================================================
-    // Construction du contenu
-    // =========================================================
-
     private void buildContents(Player player) {
         ItemStack filler = item(Material.BLACK_STAINED_GLASS_PANE, " ", null);
         for (int i = 0; i < 27; i++) inventory.setItem(i, filler);
 
-        // --- Équipe Rouge — slot 2 ---
         List<String> redLore = new ArrayList<>();
         for (UUID id : gm.teamRed) {
             Player p = Bukkit.getPlayer(id);
@@ -121,12 +88,10 @@ public class TeamMenu implements InventoryHolder {
                 Lang.get(player, Lang.Key.TEAM_RED_NAME, gm.teamRed.size()),
                 redLore));
 
-        // --- Spectateur — slot 4 ---
         inventory.setItem(4, item(Material.GRAY_WOOL,
                 Lang.get(player, Lang.Key.TEAM_SPECTATOR_NAME),
                 Collections.singletonList(Lang.get(player, Lang.Key.TEAM_SPECTATOR_LORE))));
 
-        // --- Équipe Bleue — slot 6 ---
         List<String> blueLore = new ArrayList<>();
         for (UUID id : gm.teamBlue) {
             Player p = Bukkit.getPlayer(id);
@@ -139,10 +104,6 @@ public class TeamMenu implements InventoryHolder {
                 Lang.get(player, Lang.Key.TEAM_BLUE_NAME, gm.teamBlue.size()),
                 blueLore));
     }
-
-    // =========================================================
-    // Gestion des clics
-    // =========================================================
 
     public static void handleClick(InventoryClickEvent event) {
         event.setCancelled(true);
@@ -182,7 +143,6 @@ public class TeamMenu implements InventoryHolder {
                 MapVoteMenu.open(player);
             }
             case 4 -> {
-                // Spectateur — autorisé à fermer sans équipe
                 gm.teamRed.remove(player.getUniqueId());
                 gm.teamBlue.remove(player.getUniqueId());
                 gm.playerDataMap.remove(player.getUniqueId());

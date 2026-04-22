@@ -15,10 +15,8 @@ import java.util.UUID;
 
 public class AbilityManager {
 
-    // UUID → (slot → expiry timestamp ms)
     private static final Map<UUID, Map<Integer, Long>> cooldownMap = new HashMap<>();
 
-    /** Durée maximale de cooldown autorisée en ms (10 minutes). */
     private static final long MAX_COOLDOWN_MS = 600_000L;
 
     public static boolean isAbilityItem(ItemStack stack) {
@@ -47,12 +45,8 @@ public class AbilityManager {
     }
 
     public static void setCooldown(Player player, int slot, ItemStack stack, long durationMs) {
-        // FIX : si un cooldown est déjà actif sur ce slot, ne pas le redémarrer.
-        // Cela évite le double déclenchement (son en double, scheduler en double)
-        // qui survenait quand onInteract ET onAttackEntity appelaient tous deux setCooldown.
         if (isOnCooldown(player, slot)) return;
 
-        // Plafonnement pour éviter les overflows avec des valeurs comme 999_999_999L
         long safeDuration = Math.min(durationMs, MAX_COOLDOWN_MS);
         cooldownMap.computeIfAbsent(player.getUniqueId(), k -> new HashMap<>())
                 .put(slot, System.currentTimeMillis() + safeDuration);
@@ -60,7 +54,6 @@ public class AbilityManager {
         removeGlow(stack);
         player.playSound(player.getLocation(), Sound.ENTITY_ENDER_PEARL_THROW, 1.0f, 1.2f);
 
-        // safeDuration / 50 = ticks
         long ticks = safeDuration / 50;
         UbuWool.getInstance().getServer().getScheduler().runTaskLater(UbuWool.getInstance(), () -> {
             if (!player.isOnline()) return;
@@ -95,12 +88,10 @@ public class AbilityManager {
         }
     }
 
-    /** Nettoyage par UUID — appelé à la déconnexion ou en fin de partie. */
     public static void clearCooldowns(UUID uuid) {
         cooldownMap.remove(uuid);
     }
 
-    /** @deprecated Utiliser clearCooldowns(UUID) */
     @Deprecated
     public static void clearCooldowns(String playerName) {
         cooldownMap.keySet().removeIf(uuid -> {

@@ -18,10 +18,6 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
-/**
- * BuyMenu — menu d'achat non-fermable (comme le TeamMenu et le MapVoteMenu).
- * Le joueur ne peut pas fermer ce menu tant que la phase d'achat est active.
- */
 public class BuyMenu implements InventoryHolder {
 
     public static final Map<String, Map<String, Integer>> roundPurchases = new HashMap<>();
@@ -54,24 +50,14 @@ public class BuyMenu implements InventoryHolder {
         player.openInventory(menu.inventory);
     }
 
-    // =========================================================
-    // Blocage de fermeture
-    // =========================================================
-
-    /**
-     * Appelé depuis PlayerListener.onInventoryClose().
-     * Si on est encore en BUY_PHASE, on rouvre le menu 1 tick plus tard.
-     */
     public static void onClose(InventoryCloseEvent event) {
         if (!(event.getPlayer() instanceof Player player)) return;
         if (!(event.getInventory().getHolder() instanceof BuyMenu menu)) return;
 
         GameManager gm = menu.gm;
 
-        // Laisser fermer si la phase d'achat est terminée
         if (gm.state != GameManager.GameState.BUY_PHASE) return;
 
-        // Rouvrir 1 tick plus tard
         UbuWool.getInstance().getServer().getScheduler()
                 .runTaskLater(UbuWool.getInstance(), () -> {
                     if (!player.isOnline()) return;
@@ -80,7 +66,6 @@ public class BuyMenu implements InventoryHolder {
                 }, 1L);
     }
 
-    // ---- Prix depuis config.yml ----
     private static int priceApple()     { return GameManager.getShopPrice("apple",           400); }
     private static int pricePickaxe()   { return GameManager.getShopPrice("pickaxe-iron",    300); }
     private static int pricePickaxe2()  { return GameManager.getShopPrice("pickaxe-diamond", 300); }

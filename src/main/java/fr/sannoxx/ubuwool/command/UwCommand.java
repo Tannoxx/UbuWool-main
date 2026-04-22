@@ -12,32 +12,6 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
-/**
- * UwCommand — commande principale refactorisée.
- *
- * SÉCURITÉ :
- * - Toutes les commandes admin vérifient ubuwool.admin
- * - /uw stop sans argument → stoppe la partie du joueur (admin only)
- * - /uw stop <id> → stoppe l'instance #id (admin only)
- * - Les joueurs ne peuvent pas affecter d'autres instances que la leur
- *
- * MULTI-INSTANCE :
- * - /uw join → file d'attente automatique (matchmaking)
- * - /uw join <id> → rejoint directement l'instance #id (si WAITING/AGENT_SELECT)
- * - /uw queue → alias de /uw join
- * - /uw leave → quitte sa partie courante ou la file d'attente
- *
- * AUDIT DES PERMISSIONS (commandes manquantes corrigées) :
- * - /uw start        → admin only ✔ (était ouvert à tous → CORRIGÉ)
- * - /uw stop         → admin only ✔ (était ouvert à tous → CORRIGÉ)
- * - /uw admin *      → admin only ✔
- * - /uw agent        → joueur en partie only ✔
- * - /uw buy          → joueur en buy phase only ✔
- * - /uw vote         → tout joueur ✔
- * - /uw profile      → tout joueur ✔
- * - /uw stats        → tout joueur ✔
- * - /uw top          → tout joueur ✔
- */
 public class UwCommand implements CommandExecutor, TabCompleter {
 
     public UwCommand(org.bukkit.plugin.java.JavaPlugin plugin) {}
@@ -50,17 +24,12 @@ public class UwCommand implements CommandExecutor, TabCompleter {
 
         switch (args[0].toLowerCase()) {
 
-            // ============================================================
-            // JOUEURS — File d'attente / Join
-            // ============================================================
             case "join", "queue" -> {
                 if (!(sender instanceof Player p)) { sender.sendMessage("§cJoueurs uniquement."); return true; }
 
                 if (args.length >= 2) {
-                    // /uw join <id> — join direct
                     handleJoinDirect(p, args[1]);
                 } else {
-                    // /uw join — matchmaking automatique
                     handleJoinQueue(p);
                 }
             }
@@ -113,9 +82,6 @@ public class UwCommand implements CommandExecutor, TabCompleter {
                 }
             }
 
-            // ============================================================
-            // JOUEURS — Stats
-            // ============================================================
             case "stats" -> {
                 if (!(sender instanceof Player viewer)) { sender.sendMessage("§cJoueurs uniquement."); return true; }
                 Player target = viewer;
@@ -134,40 +100,29 @@ public class UwCommand implements CommandExecutor, TabCompleter {
                 LeaderboardMenu.open(p);
             }
 
-            // ============================================================
-            // ADMIN — start (CORRIGÉ : était accessible à tous)
-            // ============================================================
             case "start" -> {
                 if (!sender.hasPermission("ubuwool.admin")) {
                     sender.sendMessage("§cPermission refusée. §7(ubuwool.admin requis)");
                     return true;
                 }
                 if (args.length >= 2) {
-                    // /uw start <id> — démarrer directement une instance existante
                     handleAdminStart(sender, args[1]);
                 } else {
-                    // /uw start — créer une instance et y placer les joueurs en file
                     handleAdminStartFromQueue(sender);
                 }
             }
 
-            // ============================================================
-            // ADMIN — stop (CORRIGÉ : était accessible à tous)
-            // ============================================================
             case "stop" -> {
                 if (!sender.hasPermission("ubuwool.admin")) {
                     sender.sendMessage("§cPermission refusée. §7(ubuwool.admin requis)");
                     return true;
                 }
                 if (args.length >= 2) {
-                    // /uw stop <id> — stoppe une instance spécifique
                     handleAdminStop(sender, args[1]);
                 } else if (sender instanceof Player p) {
-                    // /uw stop — stoppe l'instance du joueur
                     GameManager gm = GameRegistry.getInstanceOf(p);
                     if (gm == null) {
                         sender.sendMessage("§cTu n'es pas dans une instance ! Utilise /uw stop <id>");
-                        // Lister les instances disponibles
                         listInstances(sender);
                         return true;
                     }
@@ -179,9 +134,6 @@ public class UwCommand implements CommandExecutor, TabCompleter {
                 }
             }
 
-            // ============================================================
-            // ADMIN — sous-commandes
-            // ============================================================
             case "admin" -> {
                 if (!sender.hasPermission("ubuwool.admin")) {
                     sender.sendMessage("§cPermission refusée. §7(ubuwool.admin requis)");
@@ -199,17 +151,11 @@ public class UwCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
-    // =========================================================
-    // Join / Leave handlers
-    // =========================================================
-
     private void handleJoinQueue(Player player) {
-        // Déjà en jeu ?
         if (GameRegistry.isInAnyGame(player)) {
             player.sendMessage("§cTu es déjà dans une partie ! (/uw leave pour quitter)");
             return;
         }
-        // En file d'attente ?
         if (MatchmakingQueue.isInQueue(player)) {
             player.sendMessage("§eTu es déjà en file d'attente (position " + MatchmakingQueue.getPosition(player) + ").");
             return;
@@ -248,18 +194,15 @@ public class UwCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        // Rejoindre l'équipe avec le moins de joueurs
         gm.joinTeam(player);
         player.sendMessage("§a§l✔ §7Rejoint l'instance §6#" + id + "§7 !");
     }
 
     private void handleLeave(Player player) {
-        // En file d'attente ?
         if (MatchmakingQueue.isInQueue(player)) {
             MatchmakingQueue.dequeue(player);
             return;
         }
-        // En partie ?
         GameManager gm = GameRegistry.getInstanceOf(player);
         if (gm == null) {
             player.sendMessage("§cTu n'es ni en file d'attente, ni dans une partie.");
@@ -267,10 +210,6 @@ public class UwCommand implements CommandExecutor, TabCompleter {
         }
         gm.leaveTeam(player);
     }
-
-    // =========================================================
-    // Admin handlers
-    // =========================================================
 
     private void handleAdminStartFromQueue(CommandSender sender) {
         if (MatchmakingQueue.size() < MatchmakingQueue.MIN_PLAYERS) {
@@ -296,10 +235,6 @@ public class UwCommand implements CommandExecutor, TabCompleter {
 
         sender.sendMessage("§a§l✔ §7Instance §6#" + gm.getInstanceId()
                 + " §7créée avec §e" + players.size() + " §7joueur(s).");
-
-        // FIX : enregistrer chaque joueur dans playerDataMap AVANT d'ouvrir TeamMenu
-        // Le scheduler teamMenuTask itère sur playerDataMap pour détecter les joueurs
-        // sans équipe. Sans cet enregistrement, ils sont invisibles pour le scheduler.
         for (Player p : players) {
             gm.playerDataMap.computeIfAbsent(p.getUniqueId(),
                     k -> new fr.sannoxx.ubuwool.PlayerData(p));
@@ -308,10 +243,6 @@ public class UwCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    /**
-     * Démarre directement une instance existante (appel de startGame()).
-     * Conservé pour /uw start <id>.
-     */
     private void handleAdminStart(CommandSender sender, String idStr) {
         int id;
         try { id = Integer.parseInt(idStr); }
@@ -335,14 +266,12 @@ public class UwCommand implements CommandExecutor, TabCompleter {
     private void handleAdmin(CommandSender sender, String[] args) {
         switch (args[1].toLowerCase()) {
 
-            // ---- instances : liste toutes les instances ----
             case "instances", "list" -> {
                 sender.sendMessage("§6§l--- Instances UbuWool ---");
                 for (String line : GameRegistry.getStatusLines()) sender.sendMessage(line);
                 sender.sendMessage("§7File d'attente : §e" + MatchmakingQueue.size() + " §7joueur(s)");
             }
 
-            // ---- createinstance ----
             case "createinstance" -> {
                 GameManager gm = GameRegistry.createInstance();
                 if (gm == null) {
@@ -352,7 +281,6 @@ public class UwCommand implements CommandExecutor, TabCompleter {
                 }
             }
 
-            // ---- stopall : arrête toutes les instances ----
             case "stopall" -> {
                 int count = GameRegistry.count();
                 GameRegistry.resetAll();
@@ -360,7 +288,6 @@ public class UwCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage("§a" + count + " instance(s) arrêtée(s).");
             }
 
-            // ---- forceend <id> [red|blue] ----
             case "forceend" -> {
                 if (args.length < 3) { sender.sendMessage("§cUsage : /uw admin forceend <id> [red|blue]"); return; }
                 int id;
@@ -373,7 +300,6 @@ public class UwCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage("§aRound forcé (victoire " + (redWins ? "rouge" : "bleue") + ").");
             }
 
-            // ---- getubultimate (admin en jeu) ----
             case "getubultimate" -> {
                 if (!(sender instanceof Player p)) { sender.sendMessage("§cJoueurs uniquement."); return; }
                 GameManager gm = GameRegistry.getInstanceOf(p);
@@ -385,20 +311,17 @@ public class UwCommand implements CommandExecutor, TabCompleter {
                 p.sendMessage(Lang.get(p, Lang.Key.ULTIMATE_ADMIN_UNLOCKED));
             }
 
-            // ---- reloadmaps ----
             case "reloadmaps" -> {
                 MapConfig.reload();
                 if (sender instanceof Player p) sender.sendMessage(Lang.get(p, Lang.Key.MAP_RELOAD));
                 else sender.sendMessage("§aMaps rechargées !");
             }
 
-            // ---- reloadabilities ----
             case "reloadabilities" -> {
                 AbilityConfig.reload();
                 sender.sendMessage("§aabilities.yml rechargé !");
             }
 
-            // ---- setmap <nom> ----
             case "setmap" -> {
                 if (args.length < 3) { sender.sendMessage("§cUsage : /uw admin setmap <nom>"); return; }
                 String nom = args[2];
@@ -413,7 +336,6 @@ public class UwCommand implements CommandExecutor, TabCompleter {
                 else sender.sendMessage("§aMap forcée : §f" + nom);
             }
 
-            // ---- stats <joueur> ----
             case "stats" -> {
                 if (args.length < 3) { sender.sendMessage("§cUsage : /uw admin stats <joueur>"); return; }
                 Player target = Bukkit.getPlayerExact(args[2]);
@@ -426,7 +348,6 @@ public class UwCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage("§7Agent favori : §f" + s.getFavoriteAgent());
             }
 
-            // ---- tp <joueur> <id> : téléporte un joueur dans une instance ----
             case "tp" -> {
                 if (args.length < 4) { sender.sendMessage("§cUsage : /uw admin tp <joueur> <instanceId>"); return; }
                 Player target = Bukkit.getPlayerExact(args[2]);
@@ -436,7 +357,6 @@ public class UwCommand implements CommandExecutor, TabCompleter {
                 catch (NumberFormatException e) { sender.sendMessage("§cID invalide."); return; }
                 GameManager gm = GameRegistry.getInstance(id);
                 if (gm == null) { sender.sendMessage("§cInstance introuvable."); return; }
-                // Retirer de l'ancienne instance si besoin
                 GameManager old = GameRegistry.getInstanceOf(target);
                 if (old != null) old.leaveTeam(target);
                 gm.joinTeam(target);
@@ -451,10 +371,6 @@ public class UwCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage("§6§l--- Instances disponibles ---");
         for (String line : GameRegistry.getStatusLines()) sender.sendMessage(line);
     }
-
-    // =========================================================
-    // Aide
-    // =========================================================
 
     private void sendHelp(CommandSender sender) {
         sender.sendMessage("§6§l--- UbuWool ---");
@@ -484,10 +400,6 @@ public class UwCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    // =========================================================
-    // Tab completion
-    // =========================================================
-
     @Override
     public List<String> onTabComplete(@NonNull CommandSender sender, @NonNull Command command,
                                       @NonNull String alias, String[] args) {
@@ -509,7 +421,6 @@ public class UwCommand implements CommandExecutor, TabCompleter {
                     return filterStart(names, args[1]);
                 }
                 case "join" -> {
-                    // Suggère les IDs d'instances disponibles
                     List<String> ids = new ArrayList<>();
                     for (GameManager gm : GameRegistry.getAllInstances())
                         ids.add(String.valueOf(gm.getInstanceId()));

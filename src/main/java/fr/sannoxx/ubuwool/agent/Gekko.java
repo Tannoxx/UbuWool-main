@@ -7,11 +7,6 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-/**
- * BUG CORRIGÉ : applyPassive donnait une lingering_potion sans effet de poison configuré.
- * Corrigé : on crée une ItemStack de LINGERING_POTION et on lui ajoute un effet personnalisé
- * de Poison niveau 0 (Poison I) pendant 200 ticks (10 secondes) via PotionMeta.
- */
 public class Gekko extends Agent {
     @Override public String getName() { return "Gekko"; }
     @Override public String getColor() { return "§a"; }

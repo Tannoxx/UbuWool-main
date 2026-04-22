@@ -12,22 +12,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * UbuHUD — refactorisé pour le multi-instance.
- *
- * Chaque instance a sa propre BossBar Map.
- * Les joueurs voient uniquement la bossbar de leur instance.
- *
- * CHANGEMENTS :
- * - init(gm), update(gm, ...), reset(gm) prennent l'instance en paramètre
- * - addLatePlayer(player) cherche l'instance du joueur via GameRegistry
- */
 public class UbuHUD {
 
-    /** instanceId → (playerUUID → BossBar) */
     private static final Map<Integer, Map<UUID, BossBar>> instanceBars = new ConcurrentHashMap<>();
 
-    /** Derniers états par instance pour les late-joiners */
     private static final Map<Integer, HudState> lastStates = new ConcurrentHashMap<>();
 
     private record HudState(int red, int blue, int seconds, Lang.Key key, Object[] args) {}
@@ -71,10 +59,6 @@ public class UbuHUD {
         }
     }
 
-    /**
-     * Appelé quand un joueur rejoint une instance en cours (late join).
-     * Affiche la bossbar avec le dernier état connu de son instance.
-     */
     public static void addLatePlayer(Player p) {
         GameManager gm = GameRegistry.getInstanceOf(p);
         if (gm == null) return;
@@ -106,7 +90,6 @@ public class UbuHUD {
         lastStates.remove(id);
     }
 
-    /** Reset global (disable du plugin). */
     public static void resetAll() {
         for (int id : instanceBars.keySet()) {
             Map<UUID, BossBar> bars = instanceBars.get(id);

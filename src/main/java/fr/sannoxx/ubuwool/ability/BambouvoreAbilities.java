@@ -50,15 +50,12 @@ public class BambouvoreAbilities {
         GameManager gm = GameRegistry.getInstanceOf(player);
         if (gm == null) return;
 
-        // Dropper l'émeraude sur le bloc visé (max 5 blocs), ou à 5 blocs devant si aucun bloc visé
         RayTraceResult hit = player.getWorld().rayTraceBlocks(
                 player.getEyeLocation(), player.getEyeLocation().getDirection(), 5);
         Location dropLoc;
         if (hit != null && hit.getHitBlock() != null) {
-            // On pose l'item sur la face visible du bloc touché
             dropLoc = hit.getHitBlock().getRelative(hit.getHitBlockFace()).getLocation().add(0.5, 0, 0.5);
         } else {
-            // Fallback : 5 blocs en avant du regard
             dropLoc = player.getEyeLocation().add(
                     player.getEyeLocation().getDirection().normalize().multiply(5));
         }

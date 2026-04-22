@@ -23,22 +23,16 @@ public class PlayerData {
         this.ultimateKills = 0;
     }
 
-    /**
-     * Enregistre un kill et ajoute les Ubus correspondants.
-     * @param killUbus nombre d'Ubus gagnés pour ce kill (lu depuis config)
-     */
     public void addKill(int killUbus) {
         kills++;
         ultimateKills++;
         ubus += killUbus;
     }
 
-    /** Enregistre une mort en session. */
     public void addDeath() {
         deaths++;
     }
 
-    /** @deprecated Utiliser addKill(int killUbus) */
     @Deprecated
     public void addKill() {
         addKill(GameManager.getKillUbus());

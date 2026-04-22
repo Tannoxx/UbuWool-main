@@ -35,10 +35,6 @@ public class LolitaAbilities {
     public static Set<String> dogUsedByPlayer = new HashSet<>();
     public static Set<String> playersInBanos = new HashSet<>();
 
-    /**
-     * Vérifie si un joueur est actuellement dans la zone Baños.
-     * Utilisé pour bloquer l'utilisation des capacités.
-     */
     public static boolean isInBanos(Player player) {
         return playersInBanos.contains(player.getName());
     }
@@ -55,7 +51,6 @@ public class LolitaAbilities {
         wolf.setOwner(player);
         wolf.setTamed(true);
 
-        // 5 coeurs = 10 HP max
         AttributeInstance maxHealthAttr = wolf.getAttribute(Attribute.GENERIC_MAX_HEALTH);
         if (maxHealthAttr != null) {
             maxHealthAttr.setBaseValue(10.0);

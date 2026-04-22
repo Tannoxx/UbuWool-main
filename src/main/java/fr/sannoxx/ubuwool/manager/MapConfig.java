@@ -13,7 +13,6 @@ public class MapConfig {
 
     private static final Map<String, UbuMap> maps = new LinkedHashMap<>();
 
-    // FIX : volatile — selectedMap est lue depuis plusieurs threads (schedulers void check, capture)
     private static volatile String selectedMap = null;
 
     private static File configFile;
@@ -157,7 +156,6 @@ maps:
         }
     }
 
-    @SuppressWarnings("unchecked")
     private static List<Double> getDoubleList(ConfigurationSection sec, String key) {
         Object raw = sec.get(key);
         List<Double> result = new ArrayList<>();
@@ -169,7 +167,6 @@ maps:
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     private static int[] parseIntVec3(Object entry) {
         if (entry instanceof List<?> list && list.size() >= 3) {
             try {

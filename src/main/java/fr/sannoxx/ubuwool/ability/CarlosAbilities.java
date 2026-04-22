@@ -113,11 +113,11 @@ public class CarlosAbilities {
 
         int taskId = UbuWool.getInstance().getServer().getScheduler()
                 .runTaskLater(UbuWool.getInstance(), () -> {
-                    reviveTaskIds.remove(uuid);      // AJOUT
+                    reviveTaskIds.remove(uuid);
                     activeReviveTimers.remove(uuid);
                     GameManager gm = GameRegistry.getInstanceOf(player);
                     if (gm == null) return;
-                    if (gm.state != GameManager.GameState.ROUND_ACTIVE) return;  // round fini → on annule
+                    if (gm.state != GameManager.GameState.ROUND_ACTIVE) return;
                     if (gm.deadPlayers.contains(uuid)) return;
 
                     player.sendMessage(Lang.get(player, Lang.Key.MSG_CARL_UBULT_1));
@@ -129,9 +129,9 @@ public class CarlosAbilities {
                         player.setHealth(player.getMaxHealth());
                     });
                     gm.checkTeamEliminationPublic();
-                }, 1200L).getTaskId();                // AJOUT : récupérer le taskId
+                }, 1200L).getTaskId();
 
-        reviveTaskIds.put(uuid, taskId);              // AJOUT : stocker
+        reviveTaskIds.put(uuid, taskId);
     }
 
     public static void cancelReviveTimer(UUID uuid) {
@@ -147,7 +147,6 @@ public class CarlosAbilities {
     }
 
     public static void resetRound() {
-        // AJOUT : annuler tous les timers de revive encore actifs
         for (Map.Entry<UUID, Integer> entry : reviveTaskIds.entrySet()) {
             Bukkit.getScheduler().cancelTask(entry.getValue());
         }

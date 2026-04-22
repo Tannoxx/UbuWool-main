@@ -35,12 +35,7 @@ public class DomaAbilities {
     private static final NamespacedKey HEALTH_KEY =
             new NamespacedKey("ubuwool", "doma_ult_health");
 
-    // Stocke les deux blocs de glace par joueur ciblé
     private static final Map<String, List<org.bukkit.block.Block>> iceBlocks = new HashMap<>();
-
-    // ════════════════════════════════════════════════════════════════════════
-    //  UTILITAIRES
-    // ════════════════════════════════════════════════════════════════════════
 
     public static boolean isUltActive(Player p) {
         return ultActive.contains(p.getName());
@@ -92,10 +87,6 @@ public class DomaAbilities {
         doma.sendActionBar(net.kyori.adventure.text.Component.text(bar.toString()));
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  C1 — FROZEN SLASH
-    // ════════════════════════════════════════════════════════════════════════
-
     public static boolean frozenSlash(Player doma) {
         GameManager gm = GameRegistry.getInstanceOf(doma);
         if (gm == null) return false;
@@ -113,7 +104,6 @@ public class DomaAbilities {
                 .add(hForward.clone().multiply(SLASH_DIST))
                 .add(0, 1.0, 0);
 
-        // Particules améliorées — arc de glace en demi-cercle
         spawnFrozenSlashParticles(doma.getWorld(), slashCenter, hForward, SLASH_RADIUS);
 
         doma.getWorld().playSound(eye, Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1f, 0.7f);
@@ -151,33 +141,16 @@ public class DomaAbilities {
         return true;
     }
 
-    /**
-     * Slash horizontal glacé : une ligne de particules qui balaie de gauche
-     * à droite dans le plan horizontal devant Doma, donnant l'impression
-     * d'un coup tranché avec une arme.
-     *
-     * Plan des axes :
-     *   hForward = direction du regard (horizontale)
-     *   perp     = axe latéral (perpendiculaire horizontal, gauche→droite)
-     *
-     * On trace :
-     *  - une ligne de SNOWFLAKE sur toute la largeur (-radius → +radius)
-     *    répétée sur 3 hauteurs (pieds / taille / tête) pour un volume vertical
-     *  - des SWEEP_ATTACK ponctuels aux extrémités et au centre de la ligne
-     *  - des ITEM_SNOWBALL projetés vers l'avant pour l'effet d'impact
-     *  - une traîne de DUST bleu clair
-     */
     private static void spawnFrozenSlashParticles(World world, Location center,
                                                   Vector hForward, double radius) {
         Random rng = new Random();
 
         Vector up   = new Vector(0, 1, 0);
-        Vector perp = hForward.clone().crossProduct(up).normalize(); // gauche-droite
+        Vector perp = hForward.clone().crossProduct(up).normalize();
 
         Particle.DustOptions coldDust = new Particle.DustOptions(
                 Color.fromRGB(140, 215, 255), 1.0f);
 
-        // 3 hauteurs pour couvrir la silhouette d'un joueur
         double[] heights = { -0.6, 0.0, 0.6 };
 
         for (double dy : heights) {
@@ -187,18 +160,15 @@ public class DomaAbilities {
             for (int i = 0; i <= linePoints; i++) {
                 double t = -radius + i * (2.0 * radius / linePoints);
                 Location pLoc = rowCenter.clone().add(perp.clone().multiply(t));
-                // légère variation en profondeur pour casser la ligne parfaite
                 pLoc.add(hForward.clone().multiply(rng.nextGaussian() * 0.15));
 
                 world.spawnParticle(Particle.SNOWFLAKE, pLoc, 1, 0.03, 0.04, 0.03, 0.01);
 
-                // SWEEP_ATTACK seulement aux deux extrémités et au milieu
                 if (i == 0 || i == linePoints / 2 || i == linePoints)
                     world.spawnParticle(Particle.SWEEP_ATTACK, pLoc, 1, 0, 0, 0, 0);
             }
         }
 
-        // éclats d'impact projetés vers l'avant
         for (int i = 0; i < 14; i++) {
             double t  = (rng.nextDouble() * 2 - 1) * radius;
             double dy = (rng.nextDouble() - 0.5) * 1.2;
@@ -209,7 +179,6 @@ public class DomaAbilities {
                     hForward.getX() * 0.15, 0.08, hForward.getZ() * 0.15, 0.12);
         }
 
-        // traîne de dust froid
         for (int i = 0; i < 12; i++) {
             double t  = (rng.nextDouble() * 2 - 1) * radius;
             double dy = (rng.nextDouble() - 0.5) * 1.0;
@@ -220,11 +189,6 @@ public class DomaAbilities {
             world.spawnParticle(Particle.DUST, pLoc, 1, 0, 0, 0, 0, coldDust);
         }
     }
-
-
-    // ════════════════════════════════════════════════════════════════════════
-    //  C2 — BLIZZI BLIZZAROI
-    // ════════════════════════════════════════════════════════════════════════
 
     public static boolean blizziBlizzaroi(Player doma) {
         GameManager gm = GameRegistry.getInstanceOf(doma);
@@ -257,30 +221,20 @@ public class DomaAbilities {
         doma.sendMessage(Lang.get(doma, Lang.Key.MSG_DOMA_C2_CAST, finalTarget.getName()));
         finalTarget.sendMessage(Lang.get(finalTarget, Lang.Key.MSG_DOMA_C2_FROZEN));
 
-        // Téléporter le joueur au centre de son bloc actuel
         int bx = finalTarget.getLocation().getBlockX();
         int by = finalTarget.getLocation().getBlockY();
         int bz = finalTarget.getLocation().getBlockZ();
         World w = finalTarget.getWorld();
 
-        // Centre exact du bloc (pieds)
         Location cageCenter = new Location(w, bx + 0.5, by, bz + 0.5,
                 finalTarget.getLocation().getYaw(), finalTarget.getLocation().getPitch());
         finalTarget.teleport(cageCenter);
 
-        // Placer des BARRIERS tout autour + dessus (pas aux pieds ni à la tête
-        // pour ne pas suffoquer immédiatement, juste emprisonner latéralement)
-        // On place ICE aux pieds et à la tête (suffoque sans éjecter)
         int[][] cageOffsets = {
-                // murs niveau 0 (pieds) — 4 directions
                 { 1, 0,  0}, {-1, 0,  0}, { 0, 0,  1}, { 0, 0, -1},
-                // murs niveau 1 (torse) — 4 directions
                 { 1, 1,  0}, {-1, 1,  0}, { 0, 1,  1}, { 0, 1, -1},
-                // plafond niveau 2 (empêche le saut)
                 { 0, 2,  0}, { 0, -1,  0}
         };
-
-        // Blocs de suffocation aux pieds et à la tête (BARRIER = solide, non-éjectant)
         int[][] suffocateOffsets = {
                 { 0, 0, 0},  // pieds
                 { 0, 1, 0}   // tête
@@ -304,7 +258,6 @@ public class DomaAbilities {
         }
         iceBlocks.put(targetName, placed);
 
-        // Immobilisation + recadrage chaque tick pour empêcher toute sortie
         finalTarget.addPotionEffect(new PotionEffect(
                 PotionEffectType.SLOWNESS, 60, 254, false, false));
         finalTarget.addPotionEffect(new PotionEffect(
@@ -317,7 +270,6 @@ public class DomaAbilities {
         finalTarget.getWorld().spawnParticle(Particle.SNOWFLAKE,
                 finalTarget.getLocation().add(0, 1, 0), 40, 0.5, 0.5, 0.5, 0.1);
 
-        // Tâche de recadrage : recentre le joueur chaque tick pendant 3s
         final double centerX = bx + 0.5;
         final double centerZ = bz + 0.5;
 
@@ -330,7 +282,6 @@ public class DomaAbilities {
                         return;
                     }
                     Location loc = finalTarget.getLocation();
-                    // Recadrer horizontalement si le joueur s'écarte
                     if (Math.abs(loc.getX() - centerX) > 0.3 || Math.abs(loc.getZ() - centerZ) > 0.3) {
                         Location corrected = new Location(w, centerX, loc.getY(), centerZ,
                                 loc.getYaw(), loc.getPitch());
@@ -364,11 +315,6 @@ public class DomaAbilities {
                     Sound.BLOCK_GLASS_BREAK, 0.8f, 1.8f);
         }
     }
-
-
-    // ════════════════════════════════════════════════════════════════════════
-    //  ULTIMATE — SHERBET LAND
-    // ════════════════════════════════════════════════════════════════════════
 
     public static void sherbetLand(Player doma) {
         GameManager gm = GameRegistry.getInstanceOf(doma);
@@ -405,10 +351,6 @@ public class DomaAbilities {
         doma.getWorld().spawnParticle(Particle.SNOWFLAKE,
                 doma.getLocation().add(0, 1, 0), 80, 1, 1, 1, 0.2);
     }
-
-    // ════════════════════════════════════════════════════════════════════════
-    //  RESET ROUND
-    // ════════════════════════════════════════════════════════════════════════
 
     public static void resetRound() {
         hitCounter.clear();

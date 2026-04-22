@@ -11,12 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Remplace le switch géant de 200+ lignes dans PlayerListener.handleAbilityUse().
- *
- * AJOUT : les capacités (C1, C2, Ultimate) sont bloquées si le joueur se trouve
- * actuellement dans la zone Baños de Lolita.
- */
 public class AbilityDispatcher {
 
     private static final Map<String, AgentAbility> registry = new HashMap<>();
@@ -47,19 +41,13 @@ public class AbilityDispatcher {
         return registry.get(agentName.toLowerCase());
     }
 
-    /**
-     * Point d'entrée principal : dispatch C1 ou C2 selon le nom de l'item.
-     * Les capacités sont bloquées dans la zone Baños.
-     */
     public static boolean dispatch(Player player, ItemStack stack, int slot) {
         GameManager gm = GameRegistry.getInstanceOf(player);
         if (gm == null) return false;
         PlayerData data = gm.playerDataMap.get(player.getUniqueId());
         if (data == null || data.agent == null) return false;
 
-        // Blocage dans les Baños
         if (LolitaAbilities.isInBanos(player)) {
-            player.sendMessage("§c§lBaños §7— Vous ne pouvez pas utiliser vos capacités ici !");
             return false;
         }
 
@@ -77,7 +65,6 @@ public class AbilityDispatcher {
         boolean isC2 = itemName.contains("C2");
         if (!isC1 && !isC2) return false;
 
-        // Horcus C2 gère lui-même son cooldown
         if (agentName.equals("horcus") && isC2) {
             HorcusAbilities.setLastRendezVousTp(player.getUniqueId(), false);
             HorcusAbilities.rendezVous(player);
@@ -87,7 +74,6 @@ public class AbilityDispatcher {
             return false;
         }
 
-        // Lolita C2 (morsure chihuahua) est géré dans onAttackEntity
         if (agentName.equals("lolita") && isC2) return false;
 
         boolean success;
@@ -106,12 +92,7 @@ public class AbilityDispatcher {
         return success;
     }
 
-    /**
-     * Dispatch de l'ultimate pour un agent.
-     * Bloqué dans les Baños.
-     */
     public static boolean dispatchUltimate(Player player) {
-        // Blocage dans les Baños (déjà géré dans PlayerListener mais double sécurité)
         if (LolitaAbilities.isInBanos(player)) {
             return false;
         }
@@ -128,13 +109,11 @@ public class AbilityDispatcher {
         return ability.useUltimate(player);
     }
 
-    /** Réinitialisation de tous les states d'abilities en fin de round. */
     public static void resetAllRounds() {
         for (AgentAbility ability : registry.values()) {
             try {
                 ability.resetRound();
             } catch (Exception e) {
-                // On continue même si un reset échoue
             }
         }
     }

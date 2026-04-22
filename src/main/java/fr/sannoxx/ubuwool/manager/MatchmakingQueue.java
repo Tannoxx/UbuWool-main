@@ -7,11 +7,6 @@ import org.bukkit.entity.Player;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-/**
- * MatchmakingQueue — file d'attente simple.
- *
- * CHANGEMENT : tous les messages sont traduits via Lang.java.
- */
 public class MatchmakingQueue {
 
     public static final int MIN_PLAYERS = 2;

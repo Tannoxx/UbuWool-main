@@ -27,26 +27,10 @@ class HorcusAbilityImpl implements AgentAbility {
     @Override public void resetRound() { HorcusAbilities.resetRound(); }
 }
 
-/**
- * BUGS CORRIGÉS :
- * - lastRendezVousWasTp : était un booléen statique global.
- *   Si deux joueurs Horcus utilisaient Rendez-Vous simultanément,
- *   ils écrasaient la valeur l'un de l'autre.
- *   Corrigé : Map<UUID, Boolean> — une entrée par joueur.
- * - Headshot : inflige maintenant Blindness 1s à la cible (FIX)
- * - removeRendezVousItem() : supprime totalement l'item C2 de l'inventaire
- *   quand la sponge est cassée par un ennemi (le joueur ne peut plus l'utiliser
- *   pour ce round). Si c'est Horcus lui-même qui casse, swapRendezVousItem()
- *   est utilisé à la place (comportement inchangé).
- */
 public class HorcusAbilities {
 
     public static Map<String, Location> spongePositions = new HashMap<>();
-
-    // FIX : Map par UUID au lieu d'un booléen statique global
     private static final Map<UUID, Boolean> lastRendezVousWasTpMap = new HashMap<>();
-
-    /** @deprecated Utiliser setLastRendezVousTp / wasLastRendezVousTp */
     @Deprecated
     public static boolean lastRendezVousWasTp = false;
 
@@ -58,8 +42,6 @@ public class HorcusAbilities {
     public static boolean wasLastRendezVousTp(UUID uuid) {
         return lastRendezVousWasTpMap.getOrDefault(uuid, false);
     }
-
-    /** Set des UUID de flèches tirées avec l'arc Head Hunter. */
     public static Set<UUID> headHunterArrows = new HashSet<>();
 
     public static void rendezVous(Player player) {
@@ -123,11 +105,6 @@ public class HorcusAbilities {
         }
     }
 
-    /**
-     * Supprime complètement l'item C2 Rendez-Vous de l'inventaire de Horcus.
-     * Appelé quand la sponge est cassée par un ennemi — Horcus ne peut plus
-     * utiliser sa capacité pour le reste du round.
-     */
     public static void removeRendezVousItem(Player player) {
         for (int i = 0; i < player.getInventory().getSize(); i++) {
             ItemStack s = player.getInventory().getItem(i);

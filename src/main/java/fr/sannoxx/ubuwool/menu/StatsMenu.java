@@ -11,11 +11,6 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
-/**
- * StatsMenu — remplacé par ProfileMenu (page 1).
- * Conservé uniquement pour la compatibilité de compilation.
- * Toutes les références à StatsMenu.open() redirigent vers ProfileMenu.
- */
 public class StatsMenu implements InventoryHolder {
 
     private final Inventory inventory;
@@ -37,7 +32,6 @@ public class StatsMenu implements InventoryHolder {
         if (event.getRawSlot() == 49) LeaderboardMenu.open(viewer);
     }
 
-    /** Utilitaire partagé — conservé pour compatibilité. */
     static ItemStack item(Material mat, String name, List<String> lore) {
         return ProfileMenu.item(mat, name, lore);
     }

@@ -12,15 +12,8 @@ import org.bukkit.entity.Player;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * StarManager — refactorisé pour le multi-instance.
- *
- * Chaque instance a ses propres étoiles, compteurs de ticks et tâches.
- * startRound(gm), stopRound(gm), reset(gm) prennent l'instance en paramètre.
- */
 public class StarManager {
 
-    /** instanceId → état du StarManager pour cette instance */
     private static final Map<Integer, InstanceStarState> states = new ConcurrentHashMap<>();
 
     private static class InstanceStarState {
@@ -69,7 +62,6 @@ public class StarManager {
         }
     }
 
-    /** Reset global (disable du plugin). */
     public static void resetAll() {
         for (InstanceStarState state : states.values()) {
             if (state.checkerTask != -1) Bukkit.getScheduler().cancelTask(state.checkerTask);
@@ -85,7 +77,6 @@ public class StarManager {
                     if (gm.state != GameManager.GameState.ROUND_ACTIVE) return;
                     org.bukkit.World world = Bukkit.getWorlds().getFirst();
 
-                    // Particules sur chaque étoile active
                     for (Location star : new ArrayList<>(state.activeStars)) {
                         world.spawnParticle(Particle.END_ROD,    star.clone().add(0.5, 0.5, 0.5), 4, 0.4, 0.4, 0.4, 0.03);
                         world.spawnParticle(Particle.FIREWORK, star.clone().add(0.5, 0.5, 0.5), 2, 0.3, 0.3, 0.3, 0.01);
@@ -149,7 +140,6 @@ public class StarManager {
         if (data != null && !data.isUltimateReady()) {
             data.ultimateKills++;
             gm.updateUltimateItem(player, data);
-            // Rafraîchir le tab pour que la nouvelle étoile soit visible immédiatement
             TabManager.updateTab(gm);
         }
 

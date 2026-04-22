@@ -39,7 +39,7 @@ public class Lang {
         ROUND_TIMEOUT, ROUND_FORCE_END,
         ADMIN_STATE_HEADER, ADMIN_STATE_PHASE, ADMIN_STATE_SCORE, ADMIN_STATE_ROUND,
         ADMIN_STATE_PLAYERS, ADMIN_TP_PLAYER, ADMIN_PLAYER_NOT_FOUND, ADMIN_ROUND_FORCED,
-        // Items
+
         ITEM_SEMBOL_C1, ITEM_SEMBOL_C2, ITEM_FANTOM_C1, ITEM_FANTOM_C2,
         ITEM_GARGAMEL_C1, ITEM_GARGAMEL_C2, ITEM_HORCUS_C1, ITEM_HORCUS_C2,
         ITEM_BAMBOUVORE_C1, ITEM_BAMBOUVORE_C2, ITEM_LOLITA_C1, ITEM_LOLITA_C2,
@@ -48,11 +48,11 @@ public class Lang {
         ITEM_MASCORD_C1, ITEM_MASCORD_C2, ITEM_HIJAB_C1, ITEM_HIJAB_C2,
         ITEM_ILARGIA_C1, ITEM_ILARGIA_C2, ITEM_GEKKO_PASSIVE, ITEM_GEKKO_C1, ITEM_GEKKO_C2,
         ITEM_ULTIMATE,
-        // HUD
+
         HUD_WAITING, HUD_AGENT_SELECT, HUD_BUY_PHASE, HUD_ROUND, HUD_ROUND_END, HUD_PAUSE,
-        // Résumé
+
         SUMMARY_NO_AGENT, SUMMARY_KILL_SINGULAR, SUMMARY_KILL_PLURAL,
-        // Shop UI
+
         SHOP_TITLE, SHOP_UBUS_DISPLAY, SHOP_UBUS_LORE, SHOP_ITEM_MAX,
         SHOP_ITEM_COUNT, SHOP_ITEM_NOT_BOUGHT, SHOP_ITEM_UPGRADE_AVAILABLE,
         SHOP_ITEM_APPLE_NAME, SHOP_ITEM_APPLE_DESC,
@@ -63,13 +63,13 @@ public class Lang {
         SHOP_ITEM_WOOL_NAME, SHOP_ITEM_WOOL_DESC,
         SHOP_ITEM_ABSORB_NAME, SHOP_ITEM_ABSORB_DESC,
         SHOP_ITEM_SHEARS_NAME, SHOP_ITEM_SHEARS_DESC,
-        // Map vote UI
+
         MAP_VOTE_TITLE, MAP_VOTE_MENU_TITLE, MAP_VOTE_LORE_LINE,
         MAP_VOTE_COUNT, MAP_VOTE_CURRENT, MAP_VOTE_CLICK,
-        // Team menu
+
         TEAM_MENU_TITLE, TEAM_RED_NAME, TEAM_BLUE_NAME,
         TEAM_SPECTATOR_NAME, TEAM_SPECTATOR_LORE, TEAM_NO_PLAYER, TEAM_CLICK_JOIN, TEAM_CONFIRM,
-        // Messages capacités
+
         MSG_ASKY_C1, MSG_ASKY_C2, MSG_ASKY_C2_1, MSG_ASKY_UBULT,
         MSG_BAMB_C1, MSG_BAMB_C1_1, MSG_BAMB_C2, MSG_BAMB_C2_1, MSG_BAMB_C2_2,
         MSG_BAMB_UBULT, MSG_BAMB_UBULT_1,
@@ -99,85 +99,32 @@ public class Lang {
         MSG_DOMA_UBULT,
         ITEM_DOMA_C1, ITEM_DOMA_C2,
         ULT_DOMA,
-        // Ultimates
+
         ULT_SEMBOL, ULT_FANTOM, ULT_GARGAMEL, ULT_HORCUS, ULT_BAMBOUVORE,
         ULT_LOLITA, ULT_ASKY, ULT_CARLOS, ULT_LAROK, ULT_TICKSUSPICIOUS,
         ULT_MASCORD, ULT_HIJAB, ULT_ILARGIA, ULT_GEKKO,
 
-
-        // ====================================================
-        // NOUVELLES CLÉS — Statistiques
-        // ====================================================
         STATS_MENU_TITLE, STATS_NO_DATA, STATS_KILLED_BY, STATS_WITH, STATS_KILLER_HP,
 
-        // ====================================================
-        // NOUVELLES CLÉS — Death Recap (traduction)
-        // ====================================================
-        RECAP_HEADER,
-        RECAP_KILLED_BY,
-        RECAP_AGENT,
-        RECAP_WEAPON,
-        RECAP_KILLER_HP,
-        RECAP_ENV_CAUSE,
-        RECAP_NO_INFO,
-        RECAP_ENV_KILLER,       // valeur textuelle utilisée comme clé interne (ex: "Environnement")
-        RECAP_DEFAULT_WEAPON,   // arme par défaut (ex: "épée" / "sword")
+        RECAP_HEADER, RECAP_KILLED_BY, RECAP_AGENT, RECAP_WEAPON, RECAP_KILLER_HP,
+        RECAP_ENV_CAUSE, RECAP_NO_INFO, RECAP_ENV_KILLER, RECAP_DEFAULT_WEAPON,
 
-        // ====================================================
-        // NOUVELLES CLÉS — File d'attente (MatchmakingQueue)
-        // ====================================================
-        QUEUE_JOINED,           // "Tu es en file d'attente (position %d)."
-        QUEUE_ALREADY_IN,       // "Tu es déjà en file d'attente ! (position %d)"
-        QUEUE_ALREADY_IN_GAME,  // "Tu es déjà dans une partie !"
-        QUEUE_LEFT,             // "Tu as quitté la file d'attente."
-        QUEUE_SIZE_BROADCAST,   // "%d joueur(s) en attente."
-        QUEUE_ADMIN_HINT,       // "Un admin lancera la partie avec /uw start."
+        QUEUE_JOINED, QUEUE_ALREADY_IN, QUEUE_ALREADY_IN_GAME, QUEUE_LEFT, QUEUE_SIZE_BROADCAST, QUEUE_ADMIN_HINT,
 
-        // ====================================================
-        // NOUVELLES CLÉS — ProfileMenu / Leaderboard / Stats (traduction)
-        // ====================================================
-        PROFILE_TITLE,
-        PROFILE_LANGUAGE_LABEL,
-        PROFILE_LANGUAGE_CHANGE_HINT,
-        PROFILE_STATS_SHORTCUT,
-        PROFILE_STATS_SHORTCUT_LORE,
-        PROFILE_CLICK_TO_SEE,
-        PROFILE_CURRENT_LANG,
-        PROFILE_SELECT_LANG,
+        PROFILE_TITLE, PROFILE_LANGUAGE_LABEL, PROFILE_LANGUAGE_CHANGE_HINT, PROFILE_STATS_SHORTCUT,
+        PROFILE_STATS_SHORTCUT_LORE, PROFILE_CLICK_TO_SEE, PROFILE_CURRENT_LANG, PROFILE_SELECT_LANG,
 
-        STATS_GAMES_PLAYED,
-        STATS_WIN_RATE,
-        STATS_KDA,
-        STATS_KILLS_DEATHS,
-        STATS_KILLS_LABEL,
-        STATS_DEATHS_LABEL,
-        STATS_WINS_LOSSES,
-        STATS_WINS_LABEL,
-        STATS_LOSSES_LABEL,
-        STATS_ROUNDS_LABEL,
-        STATS_ROUNDS_WON,
-        STATS_ROUNDS_LOST,
-        STATS_AGENTS_LABEL,
-        STATS_MOST_PLAYED,
-        STATS_BEST_KILLS_AGENT,
-        STATS_AGENT_KILLS,
-        STATS_AGENT_GAMES,
-        STATS_AGENT_WINRATE,
+        STATS_GAMES_PLAYED, STATS_WIN_RATE, STATS_KDA,
+        STATS_KILLS_DEATHS, STATS_KILLS_LABEL, STATS_DEATHS_LABEL,
+        STATS_WINS_LOSSES, STATS_WINS_LABEL, STATS_LOSSES_LABEL, STATS_ROUNDS_LABEL,
+        STATS_ROUNDS_WON, STATS_ROUNDS_LOST, STATS_AGENTS_LABEL, STATS_MOST_PLAYED,
+        STATS_BEST_KILLS_AGENT, STATS_AGENT_KILLS, STATS_AGENT_GAMES, STATS_AGENT_WINRATE,
 
-        LB_TITLE,
-        LB_NO_DATA,
-        LB_NO_DATA_LORE,
-        LB_KILLS_LABEL,
-        LB_KDA_LABEL,
-        LB_WINRATE_LABEL,
-        LB_FAV_AGENT_LABEL,
+        LB_TITLE, LB_NO_DATA, LB_NO_DATA_LORE, LB_KILLS_LABEL,
+        LB_KDA_LABEL, LB_WINRATE_LABEL, LB_FAV_AGENT_LABEL,
 
-        NAV_PROFILE,
-        NAV_STATS,
-        NAV_LEADERBOARD,
-        NAV_CURRENT_PAGE,
-        NAV_CLICK_TO_OPEN,
-        NAV_CLOSE,
+        NAV_PROFILE, NAV_STATS, NAV_LEADERBOARD,
+        NAV_CURRENT_PAGE, NAV_CLICK_TO_OPEN, NAV_CLOSE,
     }
 
     private static final Map<Key, String> FR = new HashMap<>();
@@ -218,8 +165,6 @@ public class Lang {
         }
         log.info("[Lang] " + localeName + " chargé — " + loaded + " clés, " + missing + " manquantes.");
     }
-
-    // ---- API publique ----
 
     public static String get(Player player, Key key) {
         String lang = PlayerProfile.getLanguage(player);

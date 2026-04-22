@@ -40,7 +40,6 @@ public class UbuWool extends JavaPlugin {
 
         MatchmakingQueue.startChecker();
 
-        // ---- Agent select : force l'ouverture du menu si pas d'agent ----
         agentSelectTask = getServer().getScheduler().runTaskTimer(this, () -> {
             for (GameManager gm : GameRegistry.getAllInstances()) {
                 if (gm.state != GameManager.GameState.AGENT_SELECT) continue;
@@ -64,7 +63,6 @@ public class UbuWool extends JavaPlugin {
                     if (!d.agent.getName().equalsIgnoreCase("ilargia")) continue;
 
                     if (IlargiaAbilities.hasNoArmor(p)) {
-                        // Renouveler seulement si l'effet est absent OU sur le point d'expirer (≤ 10 ticks)
                         org.bukkit.potion.PotionEffect invis = p.getPotionEffect(
                                 org.bukkit.potion.PotionEffectType.INVISIBILITY);
                         if (invis == null || invis.getDuration() <= 10) {
@@ -85,7 +83,6 @@ public class UbuWool extends JavaPlugin {
             }
         }, 1L, 1L).getTaskId();
 
-        // ---- Void check ----
         voidCheckTask = getServer().getScheduler().runTaskTimer(this, () -> {
             for (GameManager gm : GameRegistry.getAllInstances()) {
                 if (gm.state != GameManager.GameState.ROUND_ACTIVE
@@ -102,7 +99,6 @@ public class UbuWool extends JavaPlugin {
             }
         }, 1L, 1L).getTaskId();
 
-        // ---- Raze Rocket tracking ----
         razeRocketTask = getServer().getScheduler().runTaskTimer(this, () -> {
             for (GameManager gm : new ArrayList<>(GameRegistry.getAllInstances())) {
                 processRazeRocketsForInstance(gm);

@@ -10,26 +10,6 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Statistiques persistantes par joueur.
- *
- * Structure JSON par joueur : stats/<uuid>.json
- * {
- *   "totalKills": 42,
- *   "totalDeaths": 15,
- *   "totalWins": 7,
- *   "totalLosses": 3,
- *   "gamesPlayed": 10,
- *   "killsByAgent": { "Sembol": 12, "Carlos": 8, ... },
- *   "gamesByAgent": { "Sembol": 5, ... },
- *   "winsByAgent":  { "Sembol": 3, ... },
- *   "killsByMap":   { "TestMap": 20, ... },
- *   "abilitiesUsed": { "sembol.C1": 42, ... },
- *   "ultimatesUsed": { "Sembol": 5, ... }
- * }
- *
- * Clés UUID → pas de problème si le joueur change de pseudo.
- */
 public class PlayerStats {
 
     private static Path STATS_DIR;
@@ -41,10 +21,6 @@ public class PlayerStats {
     public static void init(UbuWool plugin) {
         STATS_DIR = plugin.getDataFolder().toPath().resolve("stats");
     }
-
-    // =========================================================
-    // Modèle de données
-    // =========================================================
 
     public static class Stats {
         public int totalKills   = 0;
@@ -88,17 +64,14 @@ public class PlayerStats {
             ultimatesUsed.merge(agentName, 1, Integer::sum);
         }
 
-        /** KDA simplifié : kills / max(1, deaths) */
         public double getKDA() {
             return (double) totalKills / Math.max(1, totalDeaths);
         }
 
-        /** Win rate en % */
         public double getWinRate() {
             return gamesPlayed == 0 ? 0.0 : (double) totalWins / gamesPlayed * 100.0;
         }
 
-        /** Agent le plus joué */
         public String getFavoriteAgent() {
             return gamesByAgent.entrySet().stream()
                     .max(Map.Entry.comparingByValue())
@@ -106,7 +79,6 @@ public class PlayerStats {
                     .orElse("§7—");
         }
 
-        /** Agent avec le meilleur KDA */
         public String getBestAgent() {
             return killsByAgent.entrySet().stream()
                     .max(Map.Entry.comparingByValue())
@@ -114,10 +86,6 @@ public class PlayerStats {
                     .orElse("§7—");
         }
     }
-
-    // =========================================================
-    // Accès public
-    // =========================================================
 
     public static Stats get(UUID uuid) {
         return cache.computeIfAbsent(uuid, PlayerStats::load);
@@ -139,10 +107,6 @@ public class PlayerStats {
         Stats stats = cache.remove(uuid);
         if (stats != null) saveToDisk(uuid, stats);
     }
-
-    // =========================================================
-    // Helpers de mutation (appelés depuis GameManager)
-    // =========================================================
 
     public static void recordKill(UUID killerUUID, String agentName, String mapName) {
         get(killerUUID).addKill(agentName, mapName);
@@ -166,17 +130,12 @@ public class PlayerStats {
 
     public static void recordAbility(UUID playerUUID, String agentName, String slot) {
         get(playerUUID).addAbilityUse(agentName, slot);
-        // Pas de save immédiat pour les abilities (trop fréquent) — sauvegardé à la fin du round
     }
 
     public static void recordUltimate(UUID playerUUID, String agentName) {
         get(playerUUID).addUltimateUse(agentName);
         save(playerUUID);
     }
-
-    // =========================================================
-    // I/O
-    // =========================================================
 
     private static Stats load(UUID uuid) {
         if (STATS_DIR == null) return new Stats();
@@ -204,10 +163,6 @@ public class PlayerStats {
         }
     }
 
-    // =========================================================
-    // Leaderboard global
-    // =========================================================
-
     public static class LeaderboardEntry {
         public final UUID uuid;
         public final String playerName;
@@ -217,10 +172,6 @@ public class PlayerStats {
         }
     }
 
-    /**
-     * Construit un leaderboard en lisant tous les fichiers stats du dossier.
-     * Trié par kills décroissants.
-     */
     public static List<LeaderboardEntry> buildLeaderboard() {
         if (STATS_DIR == null || !Files.exists(STATS_DIR)) return Collections.emptyList();
         List<LeaderboardEntry> entries = new ArrayList<>();
