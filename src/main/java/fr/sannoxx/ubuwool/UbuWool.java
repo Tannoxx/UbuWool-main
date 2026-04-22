@@ -20,6 +20,7 @@ public class UbuWool extends JavaPlugin {
     private int ilargiaTask      = -1;
     private int voidCheckTask    = -1;
     private int razeRocketTask   = -1;
+    private int teamMenuRefreshTask = -1;
 
     @Override
     public void onEnable() {
@@ -105,6 +106,18 @@ public class UbuWool extends JavaPlugin {
             }
         }, 1L, 1L).getTaskId();
 
+        teamMenuRefreshTask = getServer().getScheduler().runTaskTimer(this, () -> {
+            for (GameManager gm : GameRegistry.getAllInstances()) {
+                if (gm.state != GameManager.GameState.WAITING) continue;
+                for (org.bukkit.entity.Player p : gm.getAllPlayers()) {
+                    if (p.getOpenInventory().getTopInventory().getHolder()
+                            instanceof fr.sannoxx.ubuwool.menu.TeamMenu) {
+                        fr.sannoxx.ubuwool.menu.TeamMenu.refresh(p, gm);
+                    }
+                }
+            }
+        }, 1L, 1L).getTaskId();
+
         getLogger().info(getConfig().getString("startup-message", "UbuWool activé !"));
         getLogger().info("[UbuWool] Multi-instance activé (max " + GameRegistry.MAX_INSTANCES + " instances).");
     }
@@ -175,6 +188,7 @@ public class UbuWool extends JavaPlugin {
         if (ilargiaTask     != -1) getServer().getScheduler().cancelTask(ilargiaTask);
         if (voidCheckTask   != -1) getServer().getScheduler().cancelTask(voidCheckTask);
         if (razeRocketTask  != -1) getServer().getScheduler().cancelTask(razeRocketTask);
+        if (teamMenuRefreshTask != -1) getServer().getScheduler().cancelTask(teamMenuRefreshTask);
 
         MatchmakingQueue.stopChecker();
         MatchmakingQueue.reset();

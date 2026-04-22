@@ -616,6 +616,7 @@ public class GameManager {
         final DeathRecap.RecapData recapSnapshot = DeathRecap.getSnapshot(player.getUniqueId());
 
         UbuWool.getInstance().getServer().getScheduler().runTask(UbuWool.getInstance(), () -> {
+            if (state == GameState.GAME_OVER || !playerDataMap.containsKey(player.getUniqueId())) return;
             player.getInventory().clear();
             player.setGameMode(GameMode.SPECTATOR);
             player.setHealth(player.getMaxHealth());
