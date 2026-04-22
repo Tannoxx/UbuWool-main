@@ -389,7 +389,7 @@ public class DomaAbilities {
         ultActive.clear();
 
         iceBlocks.forEach((n, blocks) ->
-                blocks.forEach(b -> { if (b.getType() == Material.ICE) b.setType(Material.AIR); }));
+                blocks.forEach(b -> { if (b.getType() == Material.ICE || b.getType() == Material.BARRIER) b.setType(Material.AIR); }));
         iceBlocks.clear();
     }
 }
