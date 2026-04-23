@@ -54,6 +54,7 @@ public class BambouvoreAbilities {
                 player.getEyeLocation(), player.getEyeLocation().getDirection(), 5);
         Location dropLoc;
         if (hit != null && hit.getHitBlock() != null) {
+            assert hit.getHitBlockFace() != null;
             dropLoc = hit.getHitBlock().getRelative(hit.getHitBlockFace()).getLocation().add(0.5, 0, 0.5);
         } else {
             dropLoc = player.getEyeLocation().add(

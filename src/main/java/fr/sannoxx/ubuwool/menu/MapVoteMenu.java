@@ -152,13 +152,6 @@ public class MapVoteMenu implements InventoryHolder {
     }
 
     private static ItemStack item(Material mat, String name, List<String> lore) {
-        ItemStack stack = new ItemStack(mat);
-        ItemMeta meta = stack.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(name);
-            if (lore != null) meta.setLore(lore);
-            stack.setItemMeta(meta);
-        }
-        return stack;
+        return ProfileMenu.item(mat, name, lore);
     }
 }

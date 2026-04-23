@@ -113,7 +113,7 @@ public class AbilityDispatcher {
         for (AgentAbility ability : registry.values()) {
             try {
                 ability.resetRound();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }

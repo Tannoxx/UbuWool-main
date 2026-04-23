@@ -5,7 +5,9 @@ import org.bukkit.inventory.ItemStack;
 public class Larok extends Agent {
     @Override public String getName() { return "Larok"; }
     @Override public String getColor() { return "§f"; }
-    @Override public int getUltimateKillsRequired() { return 5; }
+    @Override public int getUltimateKillsRequired() {
+        return super.getUltimateKillsRequired();
+    }
     @Override public void applyPassive(Player p) {
         p.getInventory().addItem(new ItemStack(Material.WIND_CHARGE, 7));
     }

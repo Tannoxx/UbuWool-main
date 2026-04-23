@@ -288,14 +288,7 @@ public class AgentMenu implements InventoryHolder {
     }
 
     private static ItemStack makeItem(Material mat, String name, List<String> lore) {
-        ItemStack item = new ItemStack(mat);
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(name);
-            if (lore != null) meta.setLore(lore);
-            item.setItemMeta(meta);
-        }
-        return item;
+        return ProfileMenu.item(mat, name, lore);
     }
 
     public static String getAgentFromSlot(int slot) {

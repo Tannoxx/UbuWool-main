@@ -8,7 +8,9 @@ import org.bukkit.potion.PotionEffectType;
 public class Gargamel extends Agent {
     @Override public String getName() { return "Gargamel"; }
     @Override public String getColor() { return "§6"; }
-    @Override public int getUltimateKillsRequired() { return 5; }
+    @Override public int getUltimateKillsRequired() {
+        return super.getUltimateKillsRequired();
+    }
     @Override public void applyPassive(Player p) {
         ItemStack potion = new ItemStack(Material.SPLASH_POTION);
         PotionMeta meta = (PotionMeta) potion.getItemMeta();

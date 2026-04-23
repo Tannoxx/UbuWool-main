@@ -104,7 +104,7 @@ public class DomaAbilities {
                 .add(hForward.clone().multiply(SLASH_DIST))
                 .add(0, 1.0, 0);
 
-        spawnFrozenSlashParticles(doma.getWorld(), slashCenter, hForward, SLASH_RADIUS);
+        spawnFrozenSlashParticles(doma.getWorld(), slashCenter, hForward);
 
         doma.getWorld().playSound(eye, Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1f, 0.7f);
         doma.getWorld().playSound(eye, Sound.BLOCK_POWDER_SNOW_BREAK, 0.8f, 1.2f);
@@ -142,7 +142,7 @@ public class DomaAbilities {
     }
 
     private static void spawnFrozenSlashParticles(World world, Location center,
-                                                  Vector hForward, double radius) {
+                                                  Vector hForward) {
         Random rng = new Random();
 
         Vector up   = new Vector(0, 1, 0);
@@ -158,7 +158,7 @@ public class DomaAbilities {
             int linePoints = 24;
 
             for (int i = 0; i <= linePoints; i++) {
-                double t = -radius + i * (2.0 * radius / linePoints);
+                double t = -3.0 + i * (2.0 * 3.0 / linePoints);
                 Location pLoc = rowCenter.clone().add(perp.clone().multiply(t));
                 pLoc.add(hForward.clone().multiply(rng.nextGaussian() * 0.15));
 
@@ -170,7 +170,7 @@ public class DomaAbilities {
         }
 
         for (int i = 0; i < 14; i++) {
-            double t  = (rng.nextDouble() * 2 - 1) * radius;
+            double t  = (rng.nextDouble() * 2 - 1) * 3.0;
             double dy = (rng.nextDouble() - 0.5) * 1.2;
             Location pLoc = center.clone()
                     .add(perp.clone().multiply(t))
@@ -180,8 +180,8 @@ public class DomaAbilities {
         }
 
         for (int i = 0; i < 12; i++) {
-            double t  = (rng.nextDouble() * 2 - 1) * radius;
-            double dy = (rng.nextDouble() - 0.5) * 1.0;
+            double t  = (rng.nextDouble() * 2 - 1) * 3.0;
+            double dy = (rng.nextDouble() - 0.5);
             Location pLoc = center.clone()
                     .add(perp.clone().multiply(t))
                     .add(hForward.clone().multiply(rng.nextGaussian() * 0.2))
@@ -298,12 +298,7 @@ public class DomaAbilities {
     }
 
     private static void releaseIce(String targetName, Player target, GameManager gm) {
-        List<org.bukkit.block.Block> blocks = iceBlocks.remove(targetName);
-        if (blocks != null)
-            blocks.forEach(b -> {
-                if (b.getType() == Material.BARRIER || b.getType() == Material.ICE)
-                    b.setType(Material.AIR);
-            });
+        releaseIceForPlayer(targetName);
 
         if (target.isOnline() && !gm.deadPlayers.contains(target.getUniqueId())) {
             target.removePotionEffect(PotionEffectType.SLOWNESS);
@@ -341,7 +336,7 @@ public class DomaAbilities {
             healthAttr.addModifier(new AttributeModifier(
                     HEALTH_KEY, 10.0, AttributeModifier.Operation.ADD_NUMBER));
         }
-        double newMax = doma.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+        double newMax = Objects.requireNonNull(doma.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue();
         doma.setHealth(Math.min(doma.getHealth() + 10.0, newMax));
 
         var scaleAttr = doma.getAttribute(Attribute.GENERIC_SCALE);
@@ -382,7 +377,7 @@ public class DomaAbilities {
                             .filter(m -> m.getKey().equals(HEALTH_KEY))
                             .forEach(healthAttr::removeModifier);
                 }
-                double naturalMax = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+                double naturalMax = Objects.requireNonNull(p.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue();
                 if (p.getHealth() > naturalMax) p.setHealth(naturalMax);
             }
         }

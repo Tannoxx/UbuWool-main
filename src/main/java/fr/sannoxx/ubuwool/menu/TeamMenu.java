@@ -116,9 +116,7 @@ public class TeamMenu implements InventoryHolder {
         switch (slot) {
             case 2 -> {
                 gm.teamBlue.remove(player.getUniqueId());
-                if (!gm.teamRed.contains(player.getUniqueId())) {
-                    gm.teamRed.add(player.getUniqueId());
-                }
+                gm.teamRed.add(player.getUniqueId());
                 gm.playerDataMap.computeIfAbsent(player.getUniqueId(), k -> new PlayerData(player));
                 player.sendMessage(Lang.get(player, Lang.Key.JOIN_RED));
                 gm.getAllPlayers().forEach(p -> p.sendMessage("§c" + player.getName() + " → RED"));
@@ -130,9 +128,7 @@ public class TeamMenu implements InventoryHolder {
             }
             case 6 -> {
                 gm.teamRed.remove(player.getUniqueId());
-                if (!gm.teamBlue.contains(player.getUniqueId())) {
-                    gm.teamBlue.add(player.getUniqueId());
-                }
+                gm.teamBlue.add(player.getUniqueId());
                 gm.playerDataMap.computeIfAbsent(player.getUniqueId(), k -> new PlayerData(player));
                 player.sendMessage(Lang.get(player, Lang.Key.JOIN_BLUE));
                 gm.getAllPlayers().forEach(p -> p.sendMessage("§9" + player.getName() + " → BLUE"));
@@ -157,13 +153,6 @@ public class TeamMenu implements InventoryHolder {
     }
 
     private static ItemStack item(Material mat, String name, List<String> lore) {
-        ItemStack stack = new ItemStack(mat);
-        ItemMeta meta = stack.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(name);
-            if (lore != null) meta.setLore(lore);
-            stack.setItemMeta(meta);
-        }
-        return stack;
+        return ProfileMenu.item(mat, name, lore);
     }
 }

@@ -145,8 +145,8 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getEntity() instanceof Player victim)) return;
-        GameManager gm = GameRegistry.getInstanceOf(victim);
+        if (!(event.getEntity() instanceof Player target)) return;
+        GameManager gm = GameRegistry.getInstanceOf(target);
         if (gm == null) return;
 
         if (gm.state != GameManager.GameState.ROUND_ACTIVE) {
@@ -163,7 +163,7 @@ public class PlayerListener implements Listener {
             attacker = p;
         }
 
-        if (attacker instanceof Player doma && victim instanceof Player target) {
+        if (attacker instanceof Player doma) {
             PlayerData d = gm.playerDataMap.get(doma.getUniqueId());
             if (d != null && d.agent != null
                     && d.agent.getName().equalsIgnoreCase("doma")) {
@@ -172,14 +172,14 @@ public class PlayerListener implements Listener {
         }
 
         if (attacker != null && gm.playerDataMap.containsKey(attacker.getUniqueId())) {
-            gm.lastDamager.put(victim.getUniqueId(), attacker.getUniqueId());
+            gm.lastDamager.put(target.getUniqueId(), attacker.getUniqueId());
 
             PlayerData atkData = gm.playerDataMap.get(attacker.getUniqueId());
 
             if (atkData != null && atkData.agent != null
                     && atkData.agent.getName().equalsIgnoreCase("hijab")) {
-                HijabAbilities.showTargetHealth(attacker, victim);
-                if (HijabAbilities.hasFireAspect(attacker)) victim.setFireTicks(80);
+                HijabAbilities.showTargetHealth(attacker, target);
+                if (HijabAbilities.hasFireAspect(attacker)) target.setFireTicks(80);
             }
 
             if (event.getDamager() instanceof Arrow) {
@@ -198,11 +198,11 @@ public class PlayerListener implements Listener {
             }
         }
 
-        PlayerData vData = gm.playerDataMap.get(victim.getUniqueId());
+        PlayerData vData = gm.playerDataMap.get(target.getUniqueId());
         if (vData != null && vData.agent != null
                 && vData.agent.getName().equalsIgnoreCase("ticksuspicious")
                 && event.getFinalDamage() > 0) {
-            TicksuspiciousAbilities.onHitReceived(victim);
+            TicksuspiciousAbilities.onHitReceived(target);
         }
     }
 
@@ -283,14 +283,14 @@ public class PlayerListener implements Listener {
         }
 
         if (gm.state != GameManager.GameState.ROUND_ACTIVE) {
-            if (!isAllowedBreak(mat)) event.setCancelled(true);
+            if (isAllowedBreak(mat)) event.setCancelled(true);
             return;
         }
 
-        if (!isAllowedBreak(mat)) {
+        if (isAllowedBreak(mat)) {
             event.setCancelled(true);
         } else {
-            if (!isWoolBlock(mat)) {
+            if (isWoolBlock(mat)) {
                 event.setDropItems(false);
             }
         }
@@ -298,20 +298,20 @@ public class PlayerListener implements Listener {
 
     private boolean isAllowedBreak(Material mat) {
         return isWoolBlock(mat)
-                || mat == Material.DIORITE || mat == Material.IRON_BLOCK
-                || mat == Material.CHERRY_LEAVES || mat == Material.SPONGE
-                || mat == Material.JUKEBOX || mat == Material.BAMBOO_PLANKS;
+                && mat != Material.DIORITE && mat != Material.IRON_BLOCK
+                && mat != Material.CHERRY_LEAVES && mat != Material.SPONGE
+                && mat != Material.JUKEBOX && mat != Material.BAMBOO_PLANKS;
     }
 
     private boolean isWoolBlock(Material mat) {
-        return mat == Material.RED_WOOL || mat == Material.BLUE_WOOL
-                || mat == Material.WHITE_WOOL || mat == Material.ORANGE_WOOL
-                || mat == Material.MAGENTA_WOOL || mat == Material.LIGHT_BLUE_WOOL
-                || mat == Material.YELLOW_WOOL || mat == Material.LIME_WOOL
-                || mat == Material.PINK_WOOL || mat == Material.GRAY_WOOL
-                || mat == Material.LIGHT_GRAY_WOOL || mat == Material.CYAN_WOOL
-                || mat == Material.PURPLE_WOOL || mat == Material.GREEN_WOOL
-                || mat == Material.BROWN_WOOL || mat == Material.BLACK_WOOL;
+        return mat != Material.RED_WOOL && mat != Material.BLUE_WOOL
+                && mat != Material.WHITE_WOOL && mat != Material.ORANGE_WOOL
+                && mat != Material.MAGENTA_WOOL && mat != Material.LIGHT_BLUE_WOOL
+                && mat != Material.YELLOW_WOOL && mat != Material.LIME_WOOL
+                && mat != Material.PINK_WOOL && mat != Material.GRAY_WOOL
+                && mat != Material.LIGHT_GRAY_WOOL && mat != Material.CYAN_WOOL
+                && mat != Material.PURPLE_WOOL && mat != Material.GREEN_WOOL
+                && mat != Material.BROWN_WOOL && mat != Material.BLACK_WOOL;
     }
 
     @EventHandler(priority = EventPriority.HIGH)

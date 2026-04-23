@@ -5,7 +5,6 @@ import fr.sannoxx.ubuwool.UbuWool;
 import fr.sannoxx.ubuwool.manager.GameManager;
 import fr.sannoxx.ubuwool.manager.GameRegistry;
 import org.bukkit.*;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -66,8 +65,10 @@ public class AskyAbilities {
                 player.getEyeLocation(), player.getEyeLocation().getDirection(), 15);
 
         Location jukeboxLoc;
-        if (hit != null && hit.getHitBlock() != null)
+        if (hit != null && hit.getHitBlock() != null) {
+            assert hit.getHitBlockFace() != null;
             jukeboxLoc = hit.getHitBlock().getRelative(hit.getHitBlockFace()).getLocation();
+        }
         else
             jukeboxLoc = player.getLocation();
 
@@ -80,28 +81,23 @@ public class AskyAbilities {
         boolean isRed = gm.isRedTeam(player);
         final Location jLoc = jukeboxLoc;
 
-        runJukeboxPhase(jLoc, isRed, gm, 0L, 300L,
+        runJukeboxPhase(jLoc, isRed, gm,
                 Collections.singletonList(new PotionEffect(PotionEffectType.SLOWNESS, 40, 0, false, false)),
-                () -> {
-                    runJukeboxPhase(jLoc, isRed, gm, 0L, 300L,
-                            Arrays.asList(
-                                    new PotionEffect(PotionEffectType.SLOWNESS,       40, 1, false, false),
-                                    new PotionEffect(PotionEffectType.MINING_FATIGUE, 40, 0, false, false)
-                            ),
-                            () -> {
-                                runJukeboxPhase(jLoc, isRed, gm, 0L, 300L,
-                                        Arrays.asList(
-                                                new PotionEffect(PotionEffectType.SLOWNESS,       40, 2, false, false),
-                                                new PotionEffect(PotionEffectType.MINING_FATIGUE, 40, 1, false, false),
-                                                new PotionEffect(PotionEffectType.WEAKNESS,       40, 0, false, false)
-                                        ),
-                                        () -> cleanupJukebox(jLoc, gm));
-                            });
-                });
+                () -> runJukeboxPhase(jLoc, isRed, gm,
+                        Arrays.asList(
+                                new PotionEffect(PotionEffectType.SLOWNESS,       40, 1, false, false),
+                                new PotionEffect(PotionEffectType.MINING_FATIGUE, 40, 0, false, false)
+                        ),
+                        () -> runJukeboxPhase(jLoc, isRed, gm,
+                                Arrays.asList(
+                                        new PotionEffect(PotionEffectType.SLOWNESS,       40, 2, false, false),
+                                        new PotionEffect(PotionEffectType.MINING_FATIGUE, 40, 1, false, false),
+                                        new PotionEffect(PotionEffectType.WEAKNESS,       40, 0, false, false)
+                                ),
+                                () -> cleanupJukebox(jLoc, gm))));
     }
 
     private static void runJukeboxPhase(Location jLoc, boolean isRed, GameManager gm,
-                                        long startDelay, long durationTicks,
                                         List<PotionEffect> effects, Runnable onDone) {
         final long[] elapsed = {0L};
         UbuWool.getInstance().getServer().getScheduler()
@@ -114,7 +110,7 @@ public class AskyAbilities {
                         return;
                     }
 
-                    if (elapsed[0] > durationTicks) {
+                    if (elapsed[0] > 300L) {
                         task.cancel();
                         onDone.run();
                         return;
@@ -132,7 +128,7 @@ public class AskyAbilities {
                                     1, 0.3, 0.3, 0.3, 0.1);
                         }
                     }
-                }, startDelay, 20L);
+                }, 0L, 20L);
     }
 
     private static void cleanupJukebox(Location jLoc, GameManager gm) {

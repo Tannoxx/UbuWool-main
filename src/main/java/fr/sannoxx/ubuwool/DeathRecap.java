@@ -70,11 +70,7 @@ public class DeathRecap {
 
     public static void send(Player victim) {
         RecapData data = lastRecap.get(victim.getUniqueId());
-        if (data == null) {
-            sendNoInfo(victim);
-            return;
-        }
-        sendRecap(victim, data);
+        sendFromSnapshot(victim, data);
     }
 
 

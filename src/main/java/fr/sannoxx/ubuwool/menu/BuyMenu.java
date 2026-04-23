@@ -4,7 +4,6 @@ import fr.sannoxx.ubuwool.Lang;
 import fr.sannoxx.ubuwool.PlayerData;
 import fr.sannoxx.ubuwool.UbuWool;
 import fr.sannoxx.ubuwool.manager.GameManager;
-import fr.sannoxx.ubuwool.manager.GameRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -176,18 +175,18 @@ public class BuyMenu implements InventoryHolder {
         switch (slot) {
             case 10 -> {
                 if (menu.getCount("apple") >= 2) { player.sendMessage(Lang.get(player, Lang.Key.SHOP_MAX)); return; }
-                if (!charge(player, data, priceApple())) return;
+                if (charge(player, data, priceApple())) return;
                 menu.increment("apple");
                 player.sendMessage(Lang.get(player, Lang.Key.SHOP_BUY_APPLE, data.ubus));
             }
             case 12 -> {
                 if (menu.getCount("pickaxe") >= 1) {
                     if (menu.getCount("pickaxe2") >= 1) { player.sendMessage(Lang.get(player, Lang.Key.SHOP_MAX)); return; }
-                    if (!charge(player, data, pricePickaxe2())) return;
+                    if (charge(player, data, pricePickaxe2())) return;
                     menu.increment("pickaxe2");
                     player.sendMessage(Lang.get(player, Lang.Key.SHOP_BUY_PICKAXE_DIAMOND, data.ubus));
                 } else {
-                    if (!charge(player, data, pricePickaxe())) return;
+                    if (charge(player, data, pricePickaxe())) return;
                     menu.increment("pickaxe");
                     player.sendMessage(Lang.get(player, Lang.Key.SHOP_BUY_PICKAXE_IRON, data.ubus));
                 }
@@ -195,31 +194,31 @@ public class BuyMenu implements InventoryHolder {
             case 14 -> {
                 int prot = menu.getCount("prot");
                 if (prot >= 3) { player.sendMessage(Lang.get(player, Lang.Key.SHOP_MAX)); return; }
-                if (!charge(player, data, priceProt())) return;
+                if (charge(player, data, priceProt())) return;
                 menu.increment("prot");
                 player.sendMessage(Lang.get(player, Lang.Key.SHOP_BUY_PROT, prot + 1, data.ubus));
             }
             case 16 -> {
                 if (menu.getCount("sharp") >= 1) { player.sendMessage(Lang.get(player, Lang.Key.SHOP_ALREADY_BOUGHT)); return; }
-                if (!charge(player, data, priceSharp())) return;
+                if (charge(player, data, priceSharp())) return;
                 menu.increment("sharp");
                 player.sendMessage(Lang.get(player, Lang.Key.SHOP_BUY_SHARP, data.ubus));
             }
             case 28 -> {
                 if (menu.getCount("wool") >= 12) { player.sendMessage(Lang.get(player, Lang.Key.SHOP_MAX)); return; }
-                if (!charge(player, data, priceWool())) return;
+                if (charge(player, data, priceWool())) return;
                 menu.increment("wool");
                 player.sendMessage(Lang.get(player, Lang.Key.SHOP_BUY_WOOL, data.ubus));
             }
             case 30 -> {
                 if (menu.getCount("absorb") >= 3) { player.sendMessage(Lang.get(player, Lang.Key.SHOP_MAX)); return; }
-                if (!charge(player, data, priceAbsorb())) return;
+                if (charge(player, data, priceAbsorb())) return;
                 menu.increment("absorb");
                 player.sendMessage(Lang.get(player, Lang.Key.SHOP_BUY_ABSORB, data.ubus));
             }
             case 32 -> {
                 if (menu.getCount("shears") >= 1) { player.sendMessage(Lang.get(player, Lang.Key.SHOP_ALREADY_BOUGHT)); return; }
-                if (!charge(player, data, priceShears())) return;
+                if (charge(player, data, priceShears())) return;
                 menu.increment("shears");
                 player.sendMessage(Lang.get(player, Lang.Key.SHOP_BUY_SHEARS, data.ubus));
             }
@@ -231,10 +230,10 @@ public class BuyMenu implements InventoryHolder {
     private static boolean charge(Player player, PlayerData data, int cost) {
         if (data.ubus < cost) {
             player.sendMessage(Lang.get(player, Lang.Key.SHOP_NOT_ENOUGH_UBUS, data.ubus, cost));
-            return false;
+            return true;
         }
         data.ubus -= cost;
-        return true;
+        return false;
     }
 
     private static ItemStack shopItem(Player player, Material mat, Lang.Key nameKey, Lang.Key descKey, String status) {
@@ -242,13 +241,6 @@ public class BuyMenu implements InventoryHolder {
     }
 
     private static ItemStack item(Material mat, String name, java.util.List<String> lore) {
-        ItemStack stack = new ItemStack(mat);
-        ItemMeta meta = stack.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(name);
-            if (lore != null) meta.setLore(lore);
-            stack.setItemMeta(meta);
-        }
-        return stack;
+        return ProfileMenu.item(mat, name, lore);
     }
 }

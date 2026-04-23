@@ -67,8 +67,7 @@ public class FantomAbilities {
                 break;
             }
 
-            Location candidate = feetBlock.getLocation().clone().add(0.5, 1.0, 0.5);
-            dest = candidate;
+            dest = feetBlock.getLocation().clone().add(0.5, 1.0, 0.5);
         }
 
         if (dest == null) {

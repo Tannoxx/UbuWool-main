@@ -189,20 +189,19 @@ public class IlargiaAbilities {
                     Location eye = ilargia.getEyeLocation();
                     Vector forward = eye.getDirection().normalize();
 
-                    spawnFireConeParticles(ilargia.getWorld(), eye, forward, 8.0);
+                    spawnFireConeParticles(ilargia.getWorld(), eye, forward);
 
                     if (tick[0] % 6 == 0) {
                         List<Player> enemies = new ArrayList<>(
                                 isRed ? gm.getTeamBluePlayers() : gm.getTeamRedPlayers());
                         for (Player enemy : enemies) {
                             if (gm.deadPlayers.contains(enemy.getUniqueId())) continue;
-                            if (isInCone(eye, forward, enemy, 8.0, 0.82)) {
+                            if (isInCone(eye, forward, enemy)) {
                                 double newHp = enemy.getHealth() - 1.0;
+                                gm.lastDamager.put(enemy.getUniqueId(), ilargia.getUniqueId());
                                 if (newHp <= 0) {
-                                    gm.lastDamager.put(enemy.getUniqueId(), ilargia.getUniqueId());
                                     enemy.setHealth(0);
                                 } else {
-                                    gm.lastDamager.put(enemy.getUniqueId(), ilargia.getUniqueId());
                                     enemy.setHealth(newHp);
                                     enemy.getWorld().playSound(enemy.getLocation(),
                                             Sound.ENTITY_PLAYER_HURT, 0.6f, 1.2f);
@@ -215,21 +214,20 @@ public class IlargiaAbilities {
         return true;
     }
 
-    private static boolean isInCone(Location eye, Vector forward, Player target,
-                                    double range, double minDot) {
+    private static boolean isInCone(Location eye, Vector forward, Player target) {
         Vector toTarget = target.getLocation().add(0, 1, 0)
                 .toVector().subtract(eye.toVector());
         double dist = toTarget.length();
-        if (dist > range) return false;
+        if (dist > 8.0) return false;
         double dot = toTarget.normalize().dot(forward);
-        return dot >= minDot;
+        return dot >= 0.82;
     }
 
     private static void spawnFireConeParticles(World world, Location origin,
-                                               Vector forward, double range) {
+                                               Vector forward) {
         Random rng = new Random();
         for (int i = 0; i < 12; i++) {
-            double t      = 1.0 + rng.nextDouble() * (range - 1.0);
+            double t      = 1.0 + rng.nextDouble() * (8.0 - 1.0);
             double spread = t * 0.35;
             double ox     = (rng.nextDouble() - 0.5) * spread;
             double oy     = (rng.nextDouble() - 0.5) * spread;
@@ -256,8 +254,6 @@ public class IlargiaAbilities {
         Set<UUID> alreadyHit = new HashSet<>();
         final int[] tick = {0};
 
-        final double WAVE_RADIUS = 7.5;
-        final double WAVE_DEPTH  = 2.0;
         final double WAVE_SPEED  = 1.0;
 
         UbuWool.getInstance().getServer().getScheduler()
@@ -273,7 +269,7 @@ public class IlargiaAbilities {
                     double distAlongAxis = tick[0] * WAVE_SPEED;
                     Location sliceCenter = waveOrigin.clone().add(dir.clone().multiply(distAlongAxis));
 
-                    spawnWaveParticles(world, sliceCenter, dir, WAVE_RADIUS);
+                    spawnWaveParticles(world, sliceCenter, dir);
 
                     List<Player> enemies = new ArrayList<>(
                             isRed ? gm.getTeamBluePlayers() : gm.getTeamRedPlayers());
@@ -283,7 +279,7 @@ public class IlargiaAbilities {
                         if (gm.deadPlayers.contains(enemy.getUniqueId())) continue;
 
                         if (isInWaveSlice(enemy.getLocation().add(0, 1, 0),
-                                sliceCenter, dir, WAVE_RADIUS, WAVE_DEPTH)) {
+                                sliceCenter, dir)) {
 
                             alreadyHit.add(enemy.getUniqueId());
                             gm.lastDamager.put(enemy.getUniqueId(), ilargia.getUniqueId());
@@ -316,16 +312,16 @@ public class IlargiaAbilities {
     }
 
     private static boolean isInWaveSlice(Location point, Location center,
-                                         Vector dir, double radius, double depth) {
+                                         Vector dir) {
         Vector toPoint = point.toVector().subtract(center.toVector());
         double axial   = toPoint.dot(dir);
-        if (Math.abs(axial) > depth / 2.0) return false;
+        if (Math.abs(axial) > 1.0) return false;
         Vector lateral = toPoint.clone().subtract(dir.clone().multiply(axial));
-        return lateral.length() <= radius;
+        return lateral.length() <= 7.5;
     }
 
     private static void spawnWaveParticles(World world, Location center,
-                                           Vector dir, double radius) {
+                                           Vector dir) {
         Random rng = new Random();
         Vector up    = new Vector(0, 1, 0);
         Vector perp1 = dir.clone().crossProduct(up).normalize();
@@ -334,7 +330,7 @@ public class IlargiaAbilities {
 
         for (int i = 0; i < 20; i++) {
             double a    = rng.nextDouble() * Math.PI * 2;
-            double r    = rng.nextDouble() * radius;
+            double r    = rng.nextDouble() * 7.5;
             Location pLoc = center.clone()
                     .add(perp1.clone().multiply(Math.cos(a) * r))
                     .add(perp2.clone().multiply(Math.sin(a) * r));
