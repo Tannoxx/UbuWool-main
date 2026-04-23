@@ -345,7 +345,7 @@ public class DomaAbilities {
                     .filter(m -> m.getKey().equals(SIZE_KEY))
                     .forEach(scaleAttr::removeModifier);
             scaleAttr.addModifier(new AttributeModifier(
-                    SIZE_KEY, 0.2, AttributeModifier.Operation.ADD_SCALAR));
+                    SIZE_KEY, 0.5, AttributeModifier.Operation.ADD_SCALAR));
         }
 
         doma.sendMessage(Lang.get(doma, Lang.Key.MSG_DOMA_UBULT));
