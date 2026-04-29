@@ -4,6 +4,7 @@ main: fr.sannoxx.ubuwool.UbuWool
 api-version: '1.21'
 description: Plugin Woolwars Minecraft 1.21.1
 author: Sannoxx
+softdepend: [PlaceholderAPI]
 
 commands:
   uw:
