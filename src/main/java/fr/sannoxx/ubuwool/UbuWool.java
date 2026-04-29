@@ -5,6 +5,7 @@ import fr.sannoxx.ubuwool.command.UwCommand;
 import fr.sannoxx.ubuwool.listener.PlayerListener;
 import fr.sannoxx.ubuwool.manager.*;
 import fr.sannoxx.ubuwool.menu.*;
+import fr.sannoxx.ubuwool.placeholder.UbuPlaceholders;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -117,6 +118,10 @@ public class UbuWool extends JavaPlugin {
                 }
             }
         }, 1L, 1L).getTaskId();
+
+        if (UbuPlaceholders.tryRegister(this)) {
+            getLogger().info("[UbuWool] Hook PlaceholderAPI enregistré (%ubuwool_...%).");
+        }
 
         getLogger().info(getConfig().getString("startup-message", "UbuWool activé !"));
         getLogger().info("[UbuWool] Multi-instance activé (max " + GameRegistry.MAX_INSTANCES + " instances).");
