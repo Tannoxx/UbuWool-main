@@ -40,3 +40,7 @@ stats:
 # Sons
 sounds:
   enabled: true
+
+# Scoreboard sidebar style Hypixel (rendu / suppression géré automatiquement)
+scoreboard:
+  enabled: true

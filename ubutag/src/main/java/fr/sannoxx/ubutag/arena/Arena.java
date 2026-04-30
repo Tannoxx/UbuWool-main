@@ -4,6 +4,7 @@ import fr.sannoxx.ubutag.Messages;
 import fr.sannoxx.ubutag.UbuTag;
 import fr.sannoxx.ubutag.stats.PlayerStats;
 import fr.sannoxx.ubutag.util.ItemUtil;
+import fr.sannoxx.ubutag.util.Sidebar;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -70,6 +71,11 @@ public class Arena {
     private int roundSecondsLeft;
     private GameTask task;
 
+    /** Sidebar par joueur (créée à la volée par renderSidebars). */
+    private final Map<UUID, Sidebar> sidebars = new HashMap<>();
+    /** Mémorise le gagnant entre endGame() et resetToLobby() pour le scoreboard. */
+    private String lastWinnerName;
+
     public Arena(UbuTag plugin, String name) {
         this.plugin = plugin;
         this.name = name;
@@ -134,6 +140,7 @@ public class Arena {
             Player p = Bukkit.getPlayer(id);
             if (p != null) handleQuit(p, true);
         }
+        destroyAllSidebars();
         state = enabled ? ArenaState.WAITING : ArenaState.DISABLED;
         players.clear();
         alive.clear();
@@ -141,6 +148,7 @@ public class Arena {
         lastTagger.clear();
         tagCooldown.clear();
         joinedAtMs.clear();
+        lastWinnerName = null;
     }
 
     /* ─── Flux joueur ─── */
@@ -185,6 +193,7 @@ public class Arena {
         lastTagger.remove(id);
         tagCooldown.remove(id);
         joinedAtMs.remove(id);
+        destroySidebar(id);
 
         broadcast(plugin.messages().get("left", "player", p.getName()));
 
@@ -397,6 +406,7 @@ public class Arena {
         if (winnerId != null) {
             Player wp = Bukkit.getPlayer(winnerId);
             winnerName = wp == null ? "?" : wp.getName();
+            lastWinnerName = winnerName;
             PlayerStats ws = plugin.stats().getOrCreate(winnerId, winnerName);
             ws.wins++;
             ws.currentStreak++;
@@ -410,6 +420,7 @@ public class Arena {
                 playSoundAll(Sound.UI_TOAST_CHALLENGE_COMPLETE, 1f, 1f);
             }
         } else {
+            lastWinnerName = null;
             broadcast(plugin.messages().get("no-winner"));
         }
         // Replanifier le retour au lobby
@@ -424,17 +435,119 @@ public class Arena {
             Player p = Bukkit.getPlayer(id);
             if (p == null) continue;
             cleanPlayer(p);
+            destroySidebar(id);
             if (back != null) p.teleport(back);
             else if (lobby != null) p.teleport(lobby);
         }
+        destroyAllSidebars();
         players.clear();
         alive.clear();
         tagged.clear();
         lastTagger.clear();
         tagCooldown.clear();
         joinedAtMs.clear();
+        lastWinnerName = null;
         state = enabled ? ArenaState.WAITING : ArenaState.DISABLED;
         plugin.stats().saveAll();
+    }
+
+    /* ─── Scoreboard sidebar (style Hypixel) ─── */
+
+    private void renderSidebars() {
+        if (!plugin.getConfig().getBoolean("scoreboard.enabled", true)) return;
+        Messages M = plugin.messages();
+        String title = M.get("scoreboard.title");
+        String footer = M.get("scoreboard.footer");
+
+        for (UUID id : players) {
+            Player p = Bukkit.getPlayer(id);
+            if (p == null) continue;
+            Sidebar sb = sidebars.get(id);
+            if (sb == null) {
+                sb = new Sidebar(p, title);
+                sidebars.put(id, sb);
+            } else {
+                sb.setTitle(title);
+            }
+
+            List<String> rawLines;
+            Object[] vars;
+            switch (state) {
+                case WAITING:
+                case STARTING: {
+                    String status;
+                    if (state == ArenaState.STARTING) {
+                        status = M.get("scoreboard.lobby-status-starting", "seconds", countdown);
+                    } else if (players.size() < minPlayers) {
+                        status = M.get("scoreboard.lobby-status-need-more");
+                    } else {
+                        status = M.get("scoreboard.lobby-status-waiting");
+                    }
+                    rawLines = M.rawList("scoreboard.lobby");
+                    vars = new Object[]{
+                            "arena", name,
+                            "count", players.size(),
+                            "max", maxPlayers,
+                            "status", status,
+                            "footer", footer
+                    };
+                    break;
+                }
+                case IN_GAME: {
+                    String status;
+                    if (!alive.contains(id)) {
+                        status = M.get("scoreboard.game-status-spectator");
+                    } else if (tagged.contains(id)) {
+                        status = M.get("scoreboard.game-status-tagged");
+                    } else {
+                        status = M.get("scoreboard.game-status-safe");
+                    }
+                    rawLines = M.rawList("scoreboard.game");
+                    vars = new Object[]{
+                            "round", roundIndex,
+                            "time", roundSecondsLeft,
+                            "alive", alive.size(),
+                            "tagged", tagged.size(),
+                            "status", status,
+                            "footer", footer
+                    };
+                    break;
+                }
+                case ENDING: {
+                    String result = lastWinnerName != null
+                            ? M.get("scoreboard.ending-result-winner", "winner", lastWinnerName)
+                            : M.get("scoreboard.ending-result-no-winner");
+                    rawLines = M.rawList("scoreboard.ending");
+                    vars = new Object[]{
+                            "result", result,
+                            "footer", footer
+                    };
+                    break;
+                }
+                default:
+                    rawLines = java.util.Collections.emptyList();
+                    vars = new Object[0];
+                    break;
+            }
+
+            List<String> lines = new ArrayList<>(rawLines.size());
+            for (String raw : rawLines) lines.add(M.applyPlaceholders(raw, vars));
+            sb.setLines(lines);
+        }
+
+        // Nettoie les sidebars orphelines (joueur déconnecté ou parti)
+        for (UUID id : new ArrayList<>(sidebars.keySet())) {
+            if (!players.contains(id)) destroySidebar(id);
+        }
+    }
+
+    private void destroySidebar(UUID id) {
+        Sidebar sb = sidebars.remove(id);
+        if (sb != null) sb.destroy();
+    }
+
+    private void destroyAllSidebars() {
+        for (UUID id : new ArrayList<>(sidebars.keySet())) destroySidebar(id);
     }
 
     /* ─── Cosmétique ─── */
@@ -551,6 +664,7 @@ public class Arena {
                 case DISABLED:
                     break;
             }
+            renderSidebars();
         }
 
         private void sendActionBar() {

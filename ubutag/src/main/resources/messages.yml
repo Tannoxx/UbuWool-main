@@ -84,6 +84,50 @@ help-player:
   - "&e/ubutag top &7: classement des victoires"
   - "&e/ubutag list &7: liste des arènes"
   - "&e/ubutag help &7: cette aide"
+# ─── Scoreboard sidebar (style Hypixel) ───
+scoreboard:
+  title: "&e&lUBUTAG"
+  footer: "&eubutag.fr"
+  # Lobby (en attente / countdown)
+  lobby:
+    - " "
+    - "&7Map &f{arena}"
+    - "&7Joueurs &a{count}&7/&a{max}"
+    - "  "
+    - "{status}"
+    - "   "
+    - "&7Mode &fSolo"
+    - "    "
+    - "{footer}"
+  lobby-status-waiting: "&7En attente..."
+  lobby-status-need-more: "&cIl manque des joueurs"
+  lobby-status-starting: "&7Début dans &a{seconds}s"
+  # En jeu (rounds)
+  game:
+    - " "
+    - "&7Round &f{round}"
+    - "&7Temps &c{time}s"
+    - "  "
+    - "&7Vivants &a{alive}"
+    - "&7TNT &c{tagged}"
+    - "   "
+    - "{status}"
+    - "    "
+    - "{footer}"
+  game-status-tagged: "&c&lTu as la TNT !"
+  game-status-safe: "&aTu es safe"
+  game-status-spectator: "&7Spectateur"
+  # Fin de partie
+  ending:
+    - " "
+    - "{result}"
+    - "  "
+    - "&7Retour au lobby..."
+    - "   "
+    - "{footer}"
+  ending-result-winner: "&6&l{winner}"
+  ending-result-no-winner: "&cAucun gagnant"
+
 help-admin:
   - "&c/ubutag admin create <arena>"
   - "&c/ubutag admin delete <arena>"
