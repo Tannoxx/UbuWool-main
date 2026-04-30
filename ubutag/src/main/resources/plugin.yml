@@ -1,0 +1,22 @@
+name: UbuTag
+version: 1.0.0
+main: fr.sannoxx.ubutag.UbuTag
+api-version: '1.21'
+description: Plugin TNT Tag (à la Hypixel)
+author: Sannoxx
+softdepend: [PlaceholderAPI]
+
+commands:
+  ubutag:
+    description: Commande principale UbuTag
+    usage: /ubutag <join|leave|stats|top|list|help|admin>
+    aliases: [ut, tnttag]
+    permission: ubutag.player
+
+permissions:
+  ubutag.player:
+    description: Accès aux commandes joueur
+    default: true
+  ubutag.admin:
+    description: Accès aux commandes admin
+    default: op

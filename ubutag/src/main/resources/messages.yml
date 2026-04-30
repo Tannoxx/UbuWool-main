@@ -1,0 +1,144 @@
+# ──────────────────────────────────────────────────────────────────────────────
+#  UbuTag — Messages
+#  Couleurs : utilisez les codes Bukkit avec '&'.
+#  Variables disponibles selon le message : {player}, {arena}, {count}, {min},
+#  {max}, {seconds}, {round}, {tagger}, {target}, {winner}, {value}.
+# ──────────────────────────────────────────────────────────────────────────────
+
+prefix: "&8[&cUbu&fTag&8] &r"
+
+# Erreurs / général
+no-permission: "{prefix}&cTu n'as pas la permission."
+player-only: "{prefix}&cCette commande est réservée aux joueurs."
+unknown-command: "{prefix}&cCommande inconnue. &7/ubutag help"
+arena-not-found: "{prefix}&cArène introuvable : &f{arena}"
+arena-already-exists: "{prefix}&cUne arène nommée &f{arena}&c existe déjà."
+arena-disabled: "{prefix}&cCette arène est désactivée."
+arena-not-ready: "{prefix}&cCette arène n'est pas configurée correctement (lobby et au moins 2 spawns requis)."
+not-in-game: "{prefix}&cTu n'es dans aucune partie."
+already-in-game: "{prefix}&cTu es déjà dans une partie."
+game-already-running: "{prefix}&cLa partie a déjà démarré."
+arena-full: "{prefix}&cCette arène est pleine."
+
+# Lobby / countdown
+joined: "{prefix}&a{player} &7a rejoint l'arène &b{arena} &7(&e{count}&7/&e{max}&7)"
+left: "{prefix}&c{player} &7a quitté l'arène."
+countdown-start: "{prefix}&aLa partie commence dans &e{seconds}&a secondes !"
+countdown-tick: "{prefix}&aDémarrage dans &e{seconds}&a..."
+countdown-cancelled: "{prefix}&cIl manque des joueurs : démarrage annulé."
+need-more-players: "{prefix}&cIl faut au moins &e{min}&c joueurs pour démarrer."
+
+# Round / jeu
+game-start-title: "&c&lTNT TAG"
+game-start-subtitle: "&7Évite la TNT, passe-la avant qu'elle n'explose !"
+round-start: "{prefix}&6&lRound {round} &7— &fdurée : &e{seconds}s"
+you-are-tagged-title: "&c&lTU AS LA TNT"
+you-are-tagged-subtitle: "&ePasse-la avant qu'elle n'explose !"
+tag-passed: "{prefix}&c{tagger} &7a passé la TNT à &c{target}&7."
+you-tagged-target: "{prefix}&aTu as passé la TNT à &c{target}&a !"
+you-got-tagged: "{prefix}&cTu viens de recevoir la TNT !"
+explosion: "{prefix}&c&l*BOOM* &7Les joueurs avec la TNT ont été éliminés !"
+eliminated: "{prefix}&7Tu as été &céliminé&7 !"
+spectator-mode: "{prefix}&7Tu es maintenant en mode spectateur."
+winner: "{prefix}&6&l{winner} &eremporte la partie !"
+no-winner: "{prefix}&cAucun gagnant cette partie."
+game-end: "{prefix}&7Fin de la partie — retour au lobby."
+
+# Stats / commandes
+stats-header: "&8&m─────&r &cUbu&fTag &7— &fStats de &b{player} &8&m─────"
+stats-line-wins: "&7Victoires : &a{value}"
+stats-line-games: "&7Parties : &a{value}"
+stats-line-kills: "&7Éliminations : &a{value}"
+stats-line-tags: "&7TNT passées : &a{value}"
+stats-line-streak: "&7Meilleure série : &a{value}"
+stats-line-survival: "&7Temps survécu : &a{value}s"
+stats-no-data: "{prefix}&cAucune statistique pour ce joueur."
+top-header: "&8&m─────&r &cUbu&fTag &7— &fTop {value} (Wins) &8&m─────"
+top-line: "&e#{value}. &b{player} &7— &a{count} &7victoires"
+top-empty: "{prefix}&cAucune statistique enregistrée pour le moment."
+arena-list-header: "&8&m─────&r &cUbu&fTag &7— &fArènes &8&m─────"
+arena-list-line: "&7- &b{arena} &7(&e{count}&7/&e{max}&7) &8[{state}]"
+
+# Admin
+admin-created: "{prefix}&aArène &b{arena}&a créée."
+admin-deleted: "{prefix}&aArène &b{arena}&a supprimée."
+admin-set-lobby: "{prefix}&aLobby de l'arène &b{arena}&a défini sur ta position."
+admin-set-mainlobby: "{prefix}&aLobby principal défini sur ta position."
+admin-add-spawn: "{prefix}&aSpawn n°&e{count}&a ajouté à l'arène &b{arena}&a."
+admin-clear-spawns: "{prefix}&aSpawns de l'arène &b{arena}&a réinitialisés."
+admin-set-min: "{prefix}&aMin joueurs de &b{arena}&a réglé sur &e{value}&a."
+admin-set-max: "{prefix}&aMax joueurs de &b{arena}&a réglé sur &e{value}&a."
+admin-set-duration: "{prefix}&aDurée des rounds de &b{arena}&a réglée sur &e{value}s&a."
+admin-enabled: "{prefix}&aArène &b{arena}&a activée."
+admin-disabled: "{prefix}&cArène &b{arena}&c désactivée."
+admin-reload: "{prefix}&aConfigurations rechargées."
+admin-force-start: "{prefix}&aDémarrage forcé."
+admin-force-stop: "{prefix}&cArrêt forcé."
+
+# Aide
+help-header: "&8&m─────&r &cUbu&fTag &7— &fAide &8&m─────"
+help-player:
+  - "&e/ubutag join [arena] &7: rejoindre une arène (auto si vide)"
+  - "&e/ubutag leave &7: quitter la partie / file"
+  - "&e/ubutag stats [joueur] &7: voir tes stats"
+  - "&e/ubutag top &7: classement des victoires"
+  - "&e/ubutag list &7: liste des arènes"
+  - "&e/ubutag help &7: cette aide"
+# ─── Scoreboard sidebar (style Hypixel) ───
+scoreboard:
+  title: "&e&lUBUTAG"
+  footer: "&eubutag.fr"
+  # Lobby (en attente / countdown)
+  lobby:
+    - " "
+    - "&7Map &f{arena}"
+    - "&7Joueurs &a{count}&7/&a{max}"
+    - "  "
+    - "{status}"
+    - "   "
+    - "&7Mode &fSolo"
+    - "    "
+    - "{footer}"
+  lobby-status-waiting: "&7En attente..."
+  lobby-status-need-more: "&cIl manque des joueurs"
+  lobby-status-starting: "&7Début dans &a{seconds}s"
+  # En jeu (rounds)
+  game:
+    - " "
+    - "&7Round &f{round}"
+    - "&7Temps &c{time}s"
+    - "  "
+    - "&7Vivants &a{alive}"
+    - "&7TNT &c{tagged}"
+    - "   "
+    - "{status}"
+    - "    "
+    - "{footer}"
+  game-status-tagged: "&c&lTu as la TNT !"
+  game-status-safe: "&aTu es safe"
+  game-status-spectator: "&7Spectateur"
+  # Fin de partie
+  ending:
+    - " "
+    - "{result}"
+    - "  "
+    - "&7Retour au lobby..."
+    - "   "
+    - "{footer}"
+  ending-result-winner: "&6&l{winner}"
+  ending-result-no-winner: "&cAucun gagnant"
+
+help-admin:
+  - "&c/ubutag admin create <arena>"
+  - "&c/ubutag admin delete <arena>"
+  - "&c/ubutag admin setlobby <arena>"
+  - "&c/ubutag admin setmainlobby"
+  - "&c/ubutag admin addspawn <arena>"
+  - "&c/ubutag admin clearspawns <arena>"
+  - "&c/ubutag admin setmin <arena> <n>"
+  - "&c/ubutag admin setmax <arena> <n>"
+  - "&c/ubutag admin setduration <arena> <s>"
+  - "&c/ubutag admin enable|disable <arena>"
+  - "&c/ubutag admin forcestart <arena>"
+  - "&c/ubutag admin forcestop <arena>"
+  - "&c/ubutag admin reload"
